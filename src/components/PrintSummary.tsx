@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useSyncExternalStore } from "react";
 import type { CalcResult, Comparison } from "@/lib/calc";
 import type { Country } from "@/lib/countries";
-import { COMPANY, HERO_ID, type MinibarSettings } from "@/lib/defaults";
+import { BASE_PATH, COMPANY, HERO_ID, type MinibarSettings } from "@/lib/defaults";
 import { formatKwh, formatMoney, formatNumber, formatPayback, formatRate } from "@/lib/format";
 import { DISCLAIMER, type SalesInputs } from "@/lib/inputs";
 import { fxFor, tariffFor } from "@/lib/tariffs";
@@ -38,7 +38,7 @@ export function PrintSummary({ inputs, country, result, comparison, settings, ta
     <div className="hidden print:block text-[11px] leading-snug text-ink">
       <header className="flex items-end justify-between border-b border-navy pb-3">
         <div>
-          <Image src="/logo.png" alt={COMPANY} width={2685} height={729} className="h-14 w-auto" />
+          <Image src={`${BASE_PATH}/logo.png`} alt={COMPANY} width={2685} height={729} className="h-14 w-auto" />
           <div className="mt-2 text-sm text-slate-ui">Minibar electricity savings summary</div>
         </div>
         <div className="text-right text-slate-ui">

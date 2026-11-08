@@ -91,5 +91,8 @@ export const ADMIN_PIN = process.env.NEXT_PUBLIC_ADMIN_PIN ?? "1234";
 /** Public address the QR code points to (e.g. https://elektromarla.com/calculator). Falls back to the current origin. */
 export const PUBLIC_URL = process.env.NEXT_PUBLIC_PUBLIC_URL ?? "";
 
+/** Sub-folder the app is served from ("" at a domain root, "/Minibar-calc" on GitHub Pages). Prefix for public/ assets. */
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export const COMPANY = "Elektromarla";
 export const APP_NAME = "Elektromarla Minibar Savings Calculator";

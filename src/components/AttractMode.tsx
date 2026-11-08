@@ -4,7 +4,16 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { calculate } from "@/lib/calc";
 import { findCountry } from "@/lib/countries";
-import { ATTRACT_ROTATE_MS, COMPANY, DEFAULT_ROOMS, DEFAULT_YEARS, MIN_CHART_YEARS, SHOWCASE_COUNTRIES, type MinibarSettings } from "@/lib/defaults";
+import {
+  ATTRACT_ROTATE_MS,
+  BASE_PATH,
+  COMPANY,
+  DEFAULT_ROOMS,
+  DEFAULT_YEARS,
+  MIN_CHART_YEARS,
+  SHOWCASE_COUNTRIES,
+  type MinibarSettings,
+} from "@/lib/defaults";
 import { formatMoney } from "@/lib/format";
 import { fxFor, tariffFor } from "@/lib/tariffs";
 
@@ -38,7 +47,7 @@ export function AttractMode({ settings, onStart }: { settings: MinibarSettings; 
       className="fixed inset-0 z-[60] flex cursor-pointer select-none flex-col bg-white"
     >
       <div className="flex items-center justify-between px-8 pt-8 sm:px-14 sm:pt-12">
-        <Image src="/logo.png" alt={COMPANY} width={2685} height={729} priority className="h-14 w-auto sm:h-20" />
+        <Image src={`${BASE_PATH}/logo.png`} alt={COMPANY} width={2685} height={729} priority className="h-14 w-auto sm:h-20" />
         <span className="hidden text-sm text-slate-ui sm:inline">Minibar Savings Calculator</span>
       </div>
 

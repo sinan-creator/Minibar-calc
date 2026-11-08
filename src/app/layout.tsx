@@ -3,7 +3,7 @@ import { Geist } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { RegisterServiceWorker } from "@/components/RegisterServiceWorker";
-import { APP_NAME } from "@/lib/defaults";
+import { APP_NAME, BASE_PATH } from "@/lib/defaults";
 
 const geist = Geist({ variable: "--font-geist-sans", subsets: ["latin", "latin-ext"] });
 
@@ -12,9 +12,12 @@ export const metadata: Metadata = {
   description:
     "Compare the total cost of ownership of Inverter Compressor, Absorption and Thermoelectric (Peltier) hotel minibars and see annual electricity savings and payback.",
   applicationName: APP_NAME,
-  manifest: "/manifest.webmanifest",
+  manifest: `${BASE_PATH}/manifest.webmanifest`,
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Minibar Savings" },
-  icons: { icon: [{ url: "/icon-192.png", type: "image/png", sizes: "192x192" }], apple: "/apple-touch-icon.png" },
+  icons: {
+    icon: [{ url: `${BASE_PATH}/icon-192.png`, type: "image/png", sizes: "192x192" }],
+    apple: `${BASE_PATH}/apple-touch-icon.png`,
+  },
   robots: { index: false, follow: false },
 };
 

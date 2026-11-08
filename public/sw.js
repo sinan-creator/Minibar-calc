@@ -1,8 +1,10 @@
 /* Elektromarla Minibar Savings Calculator – offline cache for the static export.
+ * Works at a domain root or in a sub-folder: paths derive from the registration scope.
  * Bump CACHE on each deploy; activate() purges older caches. */
-const CACHE = "elektromarla-minibar-v3";
-const SHELL = ["/", "/index.html", "/manifest.webmanifest", "/logo.png", "/icon-192.png"];
-const SHELL_PATHS = new Set(["/", "/index.html"]);
+const CACHE = "elektromarla-minibar-v4";
+const BASE = new URL(self.registration.scope).pathname.replace(/\/$/, ""); // "" or "/Minibar-calc"
+const SHELL = ["/", "/index.html", "/manifest.webmanifest", "/logo.png", "/icon-192.png"].map((p) => BASE + p);
+const SHELL_PATHS = new Set([BASE + "/", BASE + "/index.html"]);
 
 /** Only successful, same-origin, non-redirected responses may enter the cache. */
 const cacheable = (response) => response && response.ok && response.type === "basic" && !response.redirected;
@@ -39,11 +41,11 @@ self.addEventListener("fetch", (event) => {
         .then((response) => {
           if (cacheable(response) && SHELL_PATHS.has(url.pathname)) {
             const copy = response.clone();
-            caches.open(CACHE).then((cache) => cache.put("/", copy));
+            caches.open(CACHE).then((cache) => cache.put(BASE + "/", copy));
           }
           return response;
         })
-        .catch(() => caches.match("/").then((hit) => hit || caches.match("/index.html") || Response.error())),
+        .catch(() => caches.match(BASE + "/").then((hit) => hit || caches.match(BASE + "/index.html") || Response.error())),
     );
     return;
   }
@@ -56,12 +58,12 @@ self.addEventListener("fetch", (event) => {
     return response;
   };
 
-  if (url.pathname.startsWith("/_next/static/")) {
+  if (url.pathname.startsWith(BASE + "/_next/static/")) {
     // Content-hashed, immutable: cache first.
     event.respondWith(caches.match(request).then((cached) => cached || fetch(request).then(store)));
     return;
   }
 
-  // Everything else (manifest, icons): network first, cache as offline fallback.
+  // Everything else (manifest, icons, logo): network first, cache as offline fallback.
   event.respondWith(fetch(request).then(store).catch(() => caches.match(request).then((hit) => hit || Response.error())));
 });
