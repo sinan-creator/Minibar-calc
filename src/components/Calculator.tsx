@@ -16,6 +16,7 @@ import { Header } from "./Header";
 import { Headline } from "./Headline";
 import { I18nProvider } from "./I18nProvider";
 import { InputsPanel } from "./InputsPanel";
+import { NextStep } from "./NextStep";
 import { PrintSummary } from "./PrintSummary";
 import { Recommendation } from "./Recommendation";
 import { ShareQr } from "./ShareQr";
@@ -121,6 +122,7 @@ export function Calculator() {
                 <CumulativeChart result={result} comparison={comparison} currency={country.currency} years={inputs.years} />
               </div>
               <ComparisonTable result={result} currency={country.currency} years={inputs.years} fxRate={numeric.fxRate} />
+              <NextStep inputs={inputs} comparison={comparison} country={country} tariff={numeric.tariff} fxRate={numeric.fxRate} />
             </section>
           </div>
         </main>

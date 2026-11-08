@@ -91,3 +91,13 @@ export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export const COMPANY = "Elektromarla";
 export const APP_NAME = "Elektromarla Minibar Savings Calculator";
+
+/** Contact channels for the "next step" actions (from elektromarla.com: corporate projects line and info address). */
+export const CONTACT = {
+  email: "info@elektromarla.com",
+  /** Display form. */
+  phone: "+90 544 870 25 01",
+  /** Digits only, for tel: and wa.me links. */
+  phoneDigits: "905448702501",
+  website: "https://www.elektromarla.com",
+} as const;
