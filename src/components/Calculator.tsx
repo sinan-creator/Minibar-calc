@@ -4,7 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { track } from "@/lib/analytics";
 import { calculate, toUsdResult } from "@/lib/calc";
 import { findCountry } from "@/lib/countries";
-import { ATTRACT_IDLE_MS, DEFAULT_COUNTRY, HERO_ID, MIN_CHART_YEARS } from "@/lib/defaults";
+import { ATTRACT_IDLE_MS, DEFAULT_COUNTRY, MIN_CHART_YEARS } from "@/lib/defaults";
 import { isLang, setLang, strings, useStoredLang, type Lang } from "@/lib/i18n";
 import { fromSearchParams, initialInputs, marketDefaults, parseDecimal, toSearchParams, validateInputs, type SalesInputs } from "@/lib/inputs";
 import { useSettings } from "@/lib/settings";
@@ -112,14 +112,7 @@ export function Calculator() {
 
           <div className="mt-10 grid items-start gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
             <aside className="xl:sticky xl:top-28">
-              <InputsPanel
-                inputs={inputs}
-                country={country}
-                errors={errors}
-                competitors={settings.technologies.filter((t) => t.active && t.id !== HERO_ID)}
-                onChange={update}
-                onSelectCountry={selectCountry}
-              />
+              <InputsPanel inputs={inputs} country={country} errors={errors} onChange={update} onSelectCountry={selectCountry} />
             </aside>
 
             <section className="min-w-0 space-y-6">

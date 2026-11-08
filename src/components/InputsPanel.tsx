@@ -1,20 +1,17 @@
 "use client";
 
 import type { Country } from "@/lib/countries";
-import { PERIOD_OPTIONS, ROOM_LIMITS, type PeriodYears, type Technology, type TechnologyId } from "@/lib/defaults";
-import { techName } from "@/lib/i18n";
+import { PERIOD_OPTIONS, ROOM_LIMITS, type PeriodYears } from "@/lib/defaults";
 import type { InputErrors, SalesInputs } from "@/lib/inputs";
 import { fxFor, tariffFor } from "@/lib/tariffs";
 import { CountrySelect } from "./CountrySelect";
 import { useI18n } from "./I18nProvider";
-import { Field, Segmented, SourceTag, shortName } from "./ui";
+import { Field, Segmented, SourceTag } from "./ui";
 
 interface Props {
   inputs: SalesInputs;
   country: Country;
   errors: InputErrors;
-  /** Active competitor technologies the headline can compare against. */
-  competitors: Technology[];
   onChange: (patch: Partial<SalesInputs>) => void;
   onSelectCountry: (code: string) => void;
 }
@@ -27,16 +24,14 @@ function currencyName(code: string, locale: string) {
   }
 }
 
-export function InputsPanel({ inputs, country, errors, competitors, onChange, onSelectCountry }: Props) {
-  const { s, f, lang, locale } = useI18n();
+export function InputsPanel({ inputs, country, errors, onChange, onSelectCountry }: Props) {
+  const { s, f, locale } = useI18n();
   const tariffMeta = tariffFor(country.code) ?? null;
   const fxMeta = fxFor(country.currency) ?? null;
   const isUsd = country.currency === "USD";
   const rooms = Number(inputs.rooms) || 0;
   const stepRooms = (delta: number) =>
     onChange({ rooms: String(Math.min(ROOM_LIMITS.max, Math.max(ROOM_LIMITS.min, rooms + delta))) });
-  const activeMode = competitors.some((t) => t.id === inputs.mode) ? inputs.mode : competitors[0]?.id;
-
   const errorText = {
     rooms: errors.rooms ? s.errRooms(ROOM_LIMITS.min, f.number(ROOM_LIMITS.max)) : undefined,
     tariff: errors.tariff === "required" ? s.errTariffRequired : errors.tariff === "positive" ? s.errTariffPositive : undefined,
@@ -165,17 +160,6 @@ export function InputsPanel({ inputs, country, errors, competitors, onChange, on
           />
         </Field>
 
-        {competitors.length > 1 && activeMode && (
-          <Field label={s.compareAgainst}>
-            <Segmented<TechnologyId>
-              ariaLabel={s.compareAgainst}
-              value={activeMode}
-              onChange={(mode) => onChange({ mode })}
-              options={competitors.map((t) => ({ value: t.id, label: shortName(techName(t, lang)) }))}
-              className="w-full"
-            />
-          </Field>
-        )}
       </div>
     </div>
   );
