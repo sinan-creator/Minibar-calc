@@ -469,7 +469,10 @@ export const strings = (lang: Lang): Strings => DICT[lang];
 /** Phrase-level translation of the tariff / FX source notes (institution names stay as they are). */
 const SOURCE_PHRASES_TR: ReadonlyArray<readonly [string, string]> = [
   ["Desk estimate from Eurostat non-household electricity prices incl. taxes", "Eurostat hane dışı elektrik fiyatlarından (vergiler dahil) masa başı tahmin"],
-  ["Desk estimate from EPDK regulated business (ticarethane) tariff incl. taxes", "EPDK düzenlemeli ticarethane tarifesinden (vergiler dahil) masa başı tahmin"],
+  [
+    "Desk estimate from EPDK regulated business (ticarethane) tariff, single-rate, above 900 kWh/month, incl. taxes (April 2026)",
+    "EPDK düzenlemeli ticarethane tarifesinden masa başı tahmin: tek zamanlı, 900 kWh/ay üzeri, vergiler dahil (Nisan 2026)",
+  ],
   ["Desk estimate, 2026 market rate (volatile: confirm daily)", "Masa başı tahmin, 2026 piyasa kuru (oynak: günlük teyit edin)"],
   ["Desk estimate, 2025 market rate (volatile: confirm daily)", "Masa başı tahmin, 2025 piyasa kuru (oynak: günlük teyit edin)"],
   ["Desk estimate, 2025 market average (volatile)", "Masa başı tahmin, 2025 piyasa ortalaması (oynak)"],

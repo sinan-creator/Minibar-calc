@@ -30,7 +30,7 @@ const EUROSTAT = "Desk estimate from Eurostat non-household electricity prices i
 
 /** Keyed by ISO 3166-1 alpha-2 country code. */
 export const TARIFF_ESTIMATES: Record<string, TariffEstimate> = {
-  TR: { value: 4.9, currency: "TRY", year: 2025, source: "Desk estimate from EPDK regulated business (ticarethane) tariff incl. taxes" },
+  TR: { value: 7.3, currency: "TRY", year: 2026, source: "Desk estimate from EPDK regulated business (ticarethane) tariff, single-rate, above 900 kWh/month, incl. taxes (April 2026)" },
   EG: { value: 1.85, currency: "EGP", year: 2025, source: "Desk estimate from EgyptERA commercial tariff bands" },
   SA: { value: 0.3, currency: "SAR", year: 2025, source: "Desk estimate from Saudi Electricity Company commercial tariff (>6,000 kWh/month)" },
   AE: { value: 0.38, currency: "AED", year: 2025, source: "Desk estimate from DEWA commercial slab tariff incl. fuel surcharge" },

@@ -39,10 +39,10 @@ const VARIANTS: Variant[] = [
     lang: "tr",
     file: "elektromarla-minibar-karsilastirma-tr",
     currency: "TRY",
-    tariff: 4.9,
+    tariff: 7.3,
     fx: 50,
     country: "TR",
-    tariffNote: "4,90 TL/kWh ticarethane tarifesi (2025 tahmini) · 1 USD = 50 TL",
+    tariffNote: "7,30 TL/kWh ticarethane tarifesi, tek zamanlı, vergiler dahil (Nisan 2026 tahmini) · 1 USD = 50 TL",
     marketLabel: "Türkiye örneği",
   },
 ];
