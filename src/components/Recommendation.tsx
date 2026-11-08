@@ -35,8 +35,9 @@ export function Recommendation({ result, comparison, years }: Props) {
 
   return (
     <section aria-label={s.adviceTitle} className="rounded-3xl border border-line bg-white p-6 sm:p-7">
-      <h2 className="text-lg font-semibold tracking-tight text-navy">{s.adviceTitle}</h2>
-      <p className="mt-1 text-sm text-slate-ui">{s.adviceIntro}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-ui">{s.adviceTitle}</p>
+      <h2 className="mt-2 text-2xl font-semibold tracking-tight text-navy sm:text-3xl">{s.tagline}</h2>
+      <p className="mt-2 max-w-3xl text-sm text-slate-ui">{s.adviceIntro}</p>
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         {items.map((item) => (
           <div key={item.title} className="rounded-2xl bg-mist p-5">

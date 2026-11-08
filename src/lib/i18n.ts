@@ -17,6 +17,7 @@ type TechFacts = Record<TechnologyId, { principle: string; noise: string; idealF
 const en = {
   langLabel: "EN",
   // header
+  tagline: "3 technologies, one factory",
   savingsCalculator: "Savings Calculator",
   qr: "QR",
   shareQr: "Share as QR code",
@@ -209,6 +210,7 @@ export type Strings = typeof en;
 
 const tr: Strings = {
   langLabel: "TR",
+  tagline: "Tek fabrikada 3 teknoloji",
   savingsCalculator: "Tasarruf Hesaplayıcı",
   qr: "QR",
   shareQr: "QR kod olarak paylaş",

@@ -20,7 +20,7 @@ export function Header({ onReset, onPrint, onShare, onLang }: Props) {
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:h-20 sm:px-8">
         <div className="flex items-center gap-4">
           <Image src={`${BASE_PATH}/logo.png`} alt={`${COMPANY} miniBar`} width={2685} height={729} priority className="h-10 w-auto sm:h-12" />
-          <span className="hidden border-l border-line pl-4 text-sm text-slate-ui md:inline">{s.savingsCalculator}</span>
+          <span className="hidden border-l border-line pl-4 text-sm font-medium text-navy md:inline">{s.tagline}</span>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <Segmented<Lang>

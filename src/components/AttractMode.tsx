@@ -41,7 +41,7 @@ export function AttractMode({ settings, onStart }: { settings: MinibarSettings; 
     >
       <div className="flex items-center justify-between px-8 pt-8 sm:px-14 sm:pt-12">
         <Image src={`${BASE_PATH}/logo.png`} alt={COMPANY} width={2685} height={729} priority className="h-14 w-auto sm:h-20" />
-        <span className="hidden text-sm text-slate-ui sm:inline">{s.minibarSavingsCalculator}</span>
+        <span className="hidden text-base font-medium text-navy sm:inline">{s.tagline}</span>
       </div>
 
       <div className="flex flex-1 flex-col justify-center px-8 sm:px-14">
