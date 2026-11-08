@@ -18,6 +18,7 @@ npm run check        # calculation engine self-check (Node 24, no build needed)
 
 Deploy `out/` to any static host (Vercel, Netlify, S3, nginx). After the first online visit the service
 worker (`public/sw.js`) caches the whole app, so the iPad / touchscreen keeps working without a connection.
+Bump the `CACHE` name in `public/sw.js` on each deploy so devices purge the previous version.
 On iPad use Safari → Share → *Add to Home Screen* for a full-screen kiosk experience.
 
 ## Where things live
