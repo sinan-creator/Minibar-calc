@@ -41,6 +41,9 @@ export const DEFAULT_SETTINGS: MinibarSettings = {
 
 /** Marketing blurbs and product facts live in i18n.ts (both languages). */
 
+/** Language-independent badges shown next to the technology name. */
+export const TECH_BADGES: Partial<Record<TechnologyId, string>> = { inverter: "A+++" };
+
 /**
  * Rear-view product photos per technology (fronts look identical), served from public/.
  * Add a file under public/tech/ and list it here; technologies without an entry show no photo.
@@ -61,7 +64,8 @@ export const TECH_LIMITS = {
 export const DAYS_PER_YEAR = 365;
 export const PERIOD_OPTIONS = [1, 3, 5, 10] as const;
 export type PeriodYears = (typeof PERIOD_OPTIONS)[number];
-export const DEFAULT_YEARS: PeriodYears = 5;
+/** Hotel refurbishment cycles run 8–10 years; at 10 the Inverter is ahead of every competitor in most markets. */
+export const DEFAULT_YEARS: PeriodYears = 10;
 /** Cumulative cost chart always shows at least this many years. */
 export const MIN_CHART_YEARS = 5;
 

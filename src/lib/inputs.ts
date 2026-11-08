@@ -13,6 +13,8 @@ export interface SalesInputs {
   years: PeriodYears;
   /** Competitor the headline and hero card compare against. */
   mode: TechnologyId;
+  /** Show money in the local currency or converted to USD. */
+  display: "local" | "usd";
 }
 
 /** Error codes; the UI maps them to the active language. */
@@ -45,6 +47,7 @@ export function initialInputs(countryCode = DEFAULT_COUNTRY): SalesInputs {
     rooms: String(DEFAULT_ROOMS),
     years: DEFAULT_YEARS,
     mode: "absorption",
+    display: "local",
   };
 }
 
@@ -75,6 +78,7 @@ export function toSearchParams(i: SalesInputs): URLSearchParams {
   if (i.fxKind === "manual") p.set("xk", "m");
   p.set("y", String(i.years));
   p.set("m", i.mode);
+  if (i.display === "usd") p.set("d", "usd");
   return p;
 }
 
@@ -100,5 +104,6 @@ export function fromSearchParams(search: string): SalesInputs {
     fxKind: p.get("xk") === "m" ? "manual" : base.fxKind,
     years: (PERIOD_OPTIONS as readonly number[]).includes(years) ? (years as PeriodYears) : base.years,
     mode: mode && MODES.includes(mode) ? mode : base.mode,
+    display: p.get("d") === "usd" ? "usd" : "local",
   };
 }

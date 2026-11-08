@@ -110,7 +110,23 @@ export function InputsPanel({ inputs, country, errors, competitors, onChange, on
               {currencyName(country.currency, locale)}
             </span>
           </div>
-          <p className="mt-2 text-xs text-slate-ui">{s.currencyAuto}</p>
+          {isUsd ? (
+            <p className="mt-2 text-xs text-slate-ui">{s.currencyAuto}</p>
+          ) : (
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+              <span className="text-xs text-slate-ui">{s.showAmountsIn}</span>
+              <Segmented<SalesInputs["display"]>
+                ariaLabel={s.showAmountsIn}
+                size="sm"
+                value={inputs.display}
+                onChange={(display) => onChange({ display })}
+                options={[
+                  { value: "local", label: country.currency },
+                  { value: "usd", label: "USD" },
+                ]}
+              />
+            </div>
+          )}
         </Field>
 
         <Field label={s.exchangeRate} htmlFor="fx" error={errorText.fxRate}>

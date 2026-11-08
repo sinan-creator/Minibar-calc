@@ -17,10 +17,10 @@ export function Header({ onReset, onPrint, onShare, onLang }: Props) {
   const { s, lang } = useI18n();
   return (
     <header className="sticky top-0 z-20 border-b border-line/80 bg-white/85 backdrop-blur-md">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-5 sm:h-20 sm:px-8">
-        <div className="flex items-center gap-4">
-          <Image src={`${BASE_PATH}/logo.png`} alt={`${COMPANY} miniBar`} width={2685} height={729} priority className="h-10 w-auto sm:h-12" />
-          <span className="hidden border-l border-line pl-4 text-sm font-medium text-navy md:inline">{s.tagline}</span>
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-5 py-3 sm:px-8 sm:py-4">
+        <div className="flex flex-col gap-1">
+          <Image src={`${BASE_PATH}/logo.png`} alt={`${COMPANY} miniBar`} width={2685} height={729} priority className="h-9 w-auto sm:h-11" />
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy sm:text-xs">{s.tagline}</span>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <Segmented<Lang>

@@ -8,12 +8,13 @@ import { useI18n } from "./I18nProvider";
 interface Props {
   comparison: Comparison | null;
   country: Country;
+  /** Currency the comparison amounts are expressed in. */
+  currency: string;
   rooms: number;
 }
 
-export function Headline({ comparison, country, rooms }: Props) {
+export function Headline({ comparison, country, currency, rooms }: Props) {
   const { s, f, lang, locale } = useI18n();
-  const currency = country.currency;
   const savingsUsd = comparison ? Math.max(0, comparison.annualSavingsUsd) : null;
 
   return (

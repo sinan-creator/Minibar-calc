@@ -5,7 +5,7 @@ import { useSyncExternalStore } from "react";
 import type { CalcResult, Comparison } from "@/lib/calc";
 import { countryName, type Country } from "@/lib/countries";
 import { BASE_PATH, COMPANY, CONTACT, HERO_ID, type MinibarSettings } from "@/lib/defaults";
-import { techName } from "@/lib/i18n";
+import { localizeSource, techName } from "@/lib/i18n";
 import type { SalesInputs } from "@/lib/inputs";
 import { fxFor, tariffFor } from "@/lib/tariffs";
 import { useI18n } from "./I18nProvider";
@@ -13,25 +13,30 @@ import { useI18n } from "./I18nProvider";
 interface Props {
   inputs: SalesInputs;
   country: Country;
+  /** Currency the result amounts are expressed in. */
+  currency: string;
   result: CalcResult | null;
   comparison: Comparison | null;
   settings: MinibarSettings;
+  /** Tariff and exchange rate as entered (local currency). */
   tariff: number;
   fxRate: number;
+  /** Multiplier from USD unit prices to the display currency (1 in USD view). */
+  displayFx: number;
 }
 
 const subscribeNever = () => () => {};
 const todayLabel = (locale: string) => () => new Date().toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
 
 /** One-page A4 customer summary. Rendered only when printing. */
-export function PrintSummary({ inputs, country, result, comparison, settings, tariff, fxRate }: Props) {
+export function PrintSummary({ inputs, country, currency, result, comparison, settings, tariff, fxRate, displayFx }: Props) {
   const { s, f, lang, locale } = useI18n();
   // Client-only date (the static build has no meaningful "today").
   const today = useSyncExternalStore(subscribeNever, todayLabel(locale), () => "");
 
-  const currency = country.currency;
+  const local = country.currency;
   const tariffMeta = tariffFor(country.code);
-  const fxMeta = fxFor(currency);
+  const fxMeta = fxFor(local);
   const years = inputs.years;
   const yearsLabel = f.years(years);
   const hero = settings.technologies.find((t) => t.id === HERO_ID)!;
@@ -79,7 +84,7 @@ export function PrintSummary({ inputs, country, result, comparison, settings, ta
                   return (
                     <tr key={r.tech.id} className={`border-b border-line ${isHero ? "bg-accent-soft font-semibold text-navy" : ""}`}>
                       <td className="py-1.5 pr-2">{techName(r.tech, lang)}</td>
-                      <td className="py-1.5 pr-2 text-right">{f.money(r.tech.unitPriceUsd * fxRate, currency)}</td>
+                      <td className="py-1.5 pr-2 text-right">{f.money(r.tech.unitPriceUsd * displayFx, currency)}</td>
                       <td className="py-1.5 pr-2 text-right">{f.money(r.investment, currency)}</td>
                       <td className="py-1.5 pr-2 text-right">{f.kwh(r.annualKwh)}</td>
                       <td className="py-1.5 pr-2 text-right">{f.money(r.annualCost, currency)}</td>
@@ -130,13 +135,23 @@ export function PrintSummary({ inputs, country, result, comparison, settings, ta
             <Item label={s.hotelRooms} value={f.number(Number(inputs.rooms))} />
             <Item
               label={s.electricityTariff}
-              value={`${f.rate(tariff, currency)} ${s.perKwh}`}
-              note={inputs.tariffKind === "estimated" && tariffMeta ? s.tariffNoteEstimated(tariffMeta.year, tariffMeta.source) : s.tariffNoteManual}
+              value={`${f.rate(tariff, local)} ${s.perKwh}`}
+              note={
+                inputs.tariffKind === "estimated" && tariffMeta
+                  ? s.tariffNoteEstimated(tariffMeta.year, localizeSource(tariffMeta.source, lang))
+                  : s.tariffNoteManual
+              }
             />
             <Item
               label={s.exchangeRate}
-              value={`1 USD = ${f.number(fxRate, 4)} ${currency}`}
-              note={currency === "USD" ? undefined : inputs.fxKind === "estimated" && fxMeta ? s.fxNoteEstimated(fxMeta.year, fxMeta.source) : s.tariffNoteManual}
+              value={`1 USD = ${f.number(fxRate, 4)} ${local}`}
+              note={
+                local === "USD"
+                  ? undefined
+                  : inputs.fxKind === "estimated" && fxMeta
+                    ? s.fxNoteEstimated(fxMeta.year, localizeSource(fxMeta.source, lang))
+                    : s.tariffNoteManual
+              }
             />
             <Item label={s.comparisonPeriod} value={yearsLabel} />
             <Item label={s.operatingDays} value={s.operatingDaysValue} />

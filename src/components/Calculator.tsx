@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { calculate } from "@/lib/calc";
+import { calculate, toUsdResult } from "@/lib/calc";
 import { findCountry } from "@/lib/countries";
 import { ATTRACT_IDLE_MS, DEFAULT_COUNTRY, HERO_ID, MIN_CHART_YEARS } from "@/lib/defaults";
 import { isLang, setLang, strings, useStoredLang, type Lang } from "@/lib/i18n";
@@ -81,7 +81,12 @@ export function Calculator() {
     years: inputs.years,
   };
 
-  const result = valid ? calculate(settings, numeric, MIN_CHART_YEARS) : null;
+  const localResult = valid ? calculate(settings, numeric, MIN_CHART_YEARS) : null;
+  // "Show amounts in USD": every money figure is converted; inputs stay in the local currency.
+  const showUsd = inputs.display === "usd" && country.currency !== "USD";
+  const result = localResult && showUsd ? toUsdResult(localResult, numeric.fxRate) : localResult;
+  const displayCurrency = showUsd ? "USD" : country.currency;
+  const displayFx = showUsd ? 1 : numeric.fxRate;
   const comparison = result
     ? (result.comparisons.find((c) => c.competitor.tech.id === inputs.mode) ?? result.comparisons[0] ?? null)
     : null;
@@ -99,10 +104,10 @@ export function Calculator() {
         <Header onReset={reset} onPrint={() => window.print()} onShare={() => setShareOpen(true)} onLang={setLang} />
 
         <main className="mx-auto w-full max-w-7xl flex-1 px-5 pb-20 sm:px-8">
-          <Headline comparison={comparison} country={country} rooms={numeric.rooms} />
+          <Headline comparison={comparison} country={country} currency={displayCurrency} rooms={numeric.rooms} />
 
           <div className="mt-10 grid items-start gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
-            <aside className="xl:sticky xl:top-24">
+            <aside className="xl:sticky xl:top-28">
               <InputsPanel
                 inputs={inputs}
                 country={country}
@@ -114,15 +119,15 @@ export function Calculator() {
             </aside>
 
             <section className="min-w-0 space-y-6">
-              <TechCards result={result} comparison={comparison} currency={country.currency} years={inputs.years} fxRate={numeric.fxRate} />
+              <TechCards result={result} comparison={comparison} currency={displayCurrency} years={inputs.years} fxRate={displayFx} />
               <Recommendation result={result} comparison={comparison} years={inputs.years} />
               <EnergySaved comparison={comparison} years={inputs.years} />
               <div className="grid gap-6 2xl:grid-cols-2">
-                <OwnershipBarChart result={result} comparison={comparison} currency={country.currency} years={inputs.years} />
-                <CumulativeChart result={result} comparison={comparison} currency={country.currency} years={inputs.years} />
+                <OwnershipBarChart result={result} comparison={comparison} currency={displayCurrency} years={inputs.years} />
+                <CumulativeChart result={result} comparison={comparison} currency={displayCurrency} years={inputs.years} />
               </div>
-              <ComparisonTable result={result} currency={country.currency} years={inputs.years} fxRate={numeric.fxRate} />
-              <NextStep inputs={inputs} comparison={comparison} country={country} tariff={numeric.tariff} fxRate={numeric.fxRate} />
+              <ComparisonTable result={result} currency={displayCurrency} years={inputs.years} fxRate={displayFx} />
+              <NextStep inputs={inputs} comparison={comparison} country={country} currency={displayCurrency} tariff={numeric.tariff} fxRate={numeric.fxRate} />
             </section>
           </div>
         </main>
@@ -134,7 +139,17 @@ export function Calculator() {
           </div>
         </footer>
 
-        {shareOpen && <ShareQr inputs={inputs} comparison={comparison} country={country} onClose={() => setShareOpen(false)} />}
+        {shareOpen && (
+          <ShareQr
+            inputs={inputs}
+            comparison={comparison}
+            country={country}
+            currency={displayCurrency}
+            tariff={numeric.tariff}
+            fxRate={numeric.fxRate}
+            onClose={() => setShareOpen(false)}
+          />
+        )}
         {showAttract && (
           <AttractMode
             settings={settings}
@@ -150,11 +165,13 @@ export function Calculator() {
       <PrintSummary
         inputs={inputs}
         country={country}
+        currency={displayCurrency}
         result={result}
         comparison={comparison}
         settings={settings}
         tariff={numeric.tariff}
         fxRate={numeric.fxRate}
+        displayFx={displayFx}
       />
     </I18nProvider>
   );

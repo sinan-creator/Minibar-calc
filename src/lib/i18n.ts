@@ -17,7 +17,7 @@ type TechFacts = Record<TechnologyId, { principle: string; noise: string; idealF
 const en = {
   langLabel: "EN",
   // header
-  tagline: "3 technologies, one factory",
+  tagline: "Three technologies, one factory",
   savingsCalculator: "Savings Calculator",
   qr: "QR",
   shareQr: "Share as QR code",
@@ -69,6 +69,8 @@ const en = {
   electricityTariff: "Electricity tariff",
   currency: "Currency",
   currencyAuto: "Selected automatically from the country.",
+  showAmountsIn: "Show amounts in",
+  energyClass: (cls: string) => `Energy class ${cls}`,
   exchangeRate: "Exchange rate",
   alreadyUsd: "Prices are already in USD.",
   comparisonPeriod: "Comparison period",
@@ -232,7 +234,7 @@ export type Strings = typeof en;
 
 const tr: Strings = {
   langLabel: "TR",
-  tagline: "Tek fabrikada 3 teknoloji",
+  tagline: "Üç teknoloji, tek fabrika",
   savingsCalculator: "Tasarruf Hesaplayıcı",
   qr: "QR",
   shareQr: "QR kod olarak paylaş",
@@ -280,6 +282,8 @@ const tr: Strings = {
   electricityTariff: "Elektrik tarifesi",
   currency: "Para birimi",
   currencyAuto: "Ülkeye göre otomatik seçilir.",
+  showAmountsIn: "Tutarları göster",
+  energyClass: (cls) => `Enerji sınıfı ${cls}`,
   exchangeRate: "Döviz kuru",
   alreadyUsd: "Fiyatlar zaten USD.",
   comparisonPeriod: "Karşılaştırma süresi",
@@ -459,6 +463,43 @@ export function useStoredLang(): Lang | null {
 }
 
 export const strings = (lang: Lang): Strings => DICT[lang];
+
+/** Phrase-level translation of the tariff / FX source notes (institution names stay as they are). */
+const SOURCE_PHRASES_TR: ReadonlyArray<readonly [string, string]> = [
+  ["Desk estimate from Eurostat non-household electricity prices incl. taxes", "Eurostat hane dışı elektrik fiyatlarından (vergiler dahil) masa başı tahmin"],
+  ["Desk estimate from EPDK regulated business (ticarethane) tariff incl. taxes", "EPDK düzenlemeli ticarethane tarifesinden (vergiler dahil) masa başı tahmin"],
+  ["Desk estimate, late-2025 market rate (volatile: confirm daily)", "Masa başı tahmin, 2025 sonu piyasa kuru (oynak: günlük teyit edin)"],
+  ["Desk estimate, 2025 market rate (volatile: confirm daily)", "Masa başı tahmin, 2025 piyasa kuru (oynak: günlük teyit edin)"],
+  ["Desk estimate, 2025 market average (volatile)", "Masa başı tahmin, 2025 piyasa ortalaması (oynak)"],
+  ["Desk estimate, 2025 market average", "Masa başı tahmin, 2025 piyasa ortalaması"],
+  ["Desk estimate, 2025 official rate", "Masa başı tahmin, 2025 resmi kur"],
+  ["Desk estimate, Central Bank of Libya official rate", "Masa başı tahmin, Libya Merkez Bankası resmi kuru"],
+  ["Official USD peg", "Resmi USD sabit kuru"],
+  ["Managed USD peg", "Yönetilen USD sabit kuru"],
+  ["Linked exchange rate system", "Bağlı kur sistemi"],
+  ["Official CBI rate", "Resmi CBI kuru"],
+  ["Fixed to EUR; derived from EUR estimate", "EUR'ya sabit; EUR tahmininden türetildi"],
+  ["Base currency", "Temel para birimi"],
+  ["(heavily subsidised)", "(yoğun sübvansiyonlu)"],
+  ["(subsidised)", "(sübvansiyonlu)"],
+  ["commercial tariff", "ticari tarife"],
+  ["commercial tariffs", "ticari tarifeler"],
+  ["commercial (hotel) tariff", "ticari (otel) tarife"],
+  ["non-residential tariff", "mesken dışı tarife"],
+  ["non-domestic", "mesken dışı"],
+  ["non-household tariffs", "hane dışı tarifeler"],
+  ["business tariff statistics", "işletme tarife istatistikleri"],
+  ["small-business tariffs", "küçük işletme tarifeleri"],
+  ["Desk estimate from", "Masa başı tahmin:"],
+  ["incl. fuel surcharge", "yakıt ek ücreti dahil"],
+  ["price statistics", "fiyat istatistikleri"],
+  ["average commercial retail price", "ortalama ticari perakende fiyatı"],
+];
+
+export function localizeSource(source: string, lang: Lang): string {
+  if (lang === "en") return source;
+  return SOURCE_PHRASES_TR.reduce((text, [en, tr]) => text.split(en).join(tr), source);
+}
 
 /** Display name for a technology: localized default names, custom admin names as typed. */
 export function techName(t: Technology, lang: Lang): string {

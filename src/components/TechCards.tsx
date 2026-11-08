@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type { CalcResult, Comparison, TechResult } from "@/lib/calc";
-import { BASE_PATH, HERO_ID, TECH_IMAGES } from "@/lib/defaults";
+import { BASE_PATH, HERO_ID, TECH_BADGES, TECH_IMAGES } from "@/lib/defaults";
 import { techName } from "@/lib/i18n";
 import { useI18n } from "./I18nProvider";
 import { EmptyState, TECH_COLORS } from "./ui";
@@ -96,6 +96,15 @@ function TechCard({
           <div className="flex items-center gap-2.5">
             <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: TECH_COLORS[r.tech.id] }} />
             <h3 className="text-lg font-semibold tracking-tight">{name}</h3>
+            {TECH_BADGES[r.tech.id] && (
+              <span
+                aria-label={s.energyClass(TECH_BADGES[r.tech.id]!)}
+                title={s.energyClass(TECH_BADGES[r.tech.id]!)}
+                className={`num rounded-md px-1.5 py-0.5 text-[11px] font-bold tracking-wide ${isHero ? "bg-white text-navy" : "bg-navy text-white"}`}
+              >
+                {TECH_BADGES[r.tech.id]}
+              </span>
+            )}
           </div>
           {isHero ? (
             <span className="rounded-full bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">{s.mostEfficient}</span>
@@ -108,7 +117,7 @@ function TechCard({
         <p className={`mt-2 text-sm leading-relaxed ${isHero ? "text-white/70" : "text-slate-ui"}`}>{s.blurbs[r.tech.id]}</p>
       </header>
 
-      <dl className="mt-6 space-y-4">
+      <dl className="my-6 space-y-4">
         <Row label={s.cooling} value={facts.principle} small />
         <Row label={s.noiseLevel} value={facts.noise} small />
         <Row label={s.pricePerUnit} value={f.money(r.tech.unitPriceUsd * fxRate, currency)} sub={showUsd ? f.money(r.tech.unitPriceUsd, "USD") : undefined} />
@@ -117,7 +126,7 @@ function TechCard({
         <Row label={s.annualElectricityCost} value={f.money(r.annualCost, currency)} />
       </dl>
 
-      <div className={`mt-6 border-t pt-5 ${isHero ? "border-white/15" : "border-line"}`}>
+      <div className={`mt-auto border-t pt-5 ${isHero ? "border-white/15" : "border-line"}`}>
         <div className={`text-[11px] font-semibold uppercase tracking-[0.16em] ${isHero ? "text-white/60" : "text-slate-ui"}`}>
           {s.totalCostOver(yearsLabel)}
         </div>

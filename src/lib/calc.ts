@@ -88,6 +88,29 @@ export function compare(hero: TechResult, competitor: TechResult, inputs: CalcIn
   };
 }
 
+/** Same result with every local-currency amount divided by `fxRate`, i.e. expressed in USD. */
+export function toUsdResult(result: CalcResult, fxRate: number): CalcResult {
+  const k = fxRate > 0 ? 1 / fxRate : 0;
+  const conv = (r: TechResult): TechResult => ({
+    ...r,
+    annualCost: r.annualCost * k,
+    investment: r.investment * k,
+    totalCost: r.totalCost * k,
+    cumulative: r.cumulative.map((v) => v * k),
+  });
+  const results = result.results.map(conv);
+  const hero = results[result.results.indexOf(result.hero)];
+  const comparisons = result.comparisons.map((c) => ({
+    ...c,
+    competitor: results[result.results.indexOf(c.competitor)],
+    annualSavings: c.annualSavings * k,
+    cumulativeSavings: c.cumulativeSavings * k,
+    additionalInvestment: c.additionalInvestment * k,
+    netBenefit: c.netBenefit * k,
+  }));
+  return { ...result, hero, results, comparisons };
+}
+
 export function calculate(settings: MinibarSettings, inputs: CalcInputs, minChartYears = 5): CalcResult {
   const chartYears = Math.max(minChartYears, Math.ceil(inputs.years));
   const active = settings.technologies.filter((t) => t.active || t.id === HERO_ID);

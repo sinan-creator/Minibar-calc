@@ -2,6 +2,7 @@
 
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import type { TechnologyId } from "@/lib/defaults";
+import { localizeSource } from "@/lib/i18n";
 import type { ValueKind } from "@/lib/tariffs";
 import { useI18n } from "./I18nProvider";
 
@@ -97,7 +98,7 @@ export function SourceTag({
   meta: { year: number; source: string; pegged?: boolean } | null | undefined;
   onUseEstimate?: () => void;
 }) {
-  const { s } = useI18n();
+  const { s, lang } = useI18n();
   if (kind === "manual" || !meta) {
     return (
       <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-ui">
@@ -119,7 +120,7 @@ export function SourceTag({
         {meta.pegged ? ` · ${s.usdPeg}` : ""}
       </span>
       <p className="mt-1.5 leading-relaxed">
-        {meta.source}. {s.notLive}
+        {localizeSource(meta.source, lang)}. {s.notLive}
       </p>
     </div>
   );

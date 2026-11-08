@@ -18,7 +18,6 @@ export const metadata: Metadata = {
     icon: [{ url: `${BASE_PATH}/icon-192.png`, type: "image/png", sizes: "192x192" }],
     apple: `${BASE_PATH}/apple-touch-icon.png`,
   },
-  robots: { index: false, follow: false },
 };
 
 export const viewport: Viewport = {

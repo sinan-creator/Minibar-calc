@@ -39,9 +39,9 @@ export function AttractMode({ settings, onStart }: { settings: MinibarSettings; 
       onKeyDown={onStart}
       className="fixed inset-0 z-[60] flex cursor-pointer select-none flex-col bg-white"
     >
-      <div className="flex items-center justify-between px-8 pt-8 sm:px-14 sm:pt-12">
-        <Image src={`${BASE_PATH}/logo.png`} alt={COMPANY} width={2685} height={729} priority className="h-14 w-auto sm:h-20" />
-        <span className="hidden text-base font-medium text-navy sm:inline">{s.tagline}</span>
+      <div className="flex flex-col gap-2 px-8 pt-8 sm:px-14 sm:pt-12">
+        <Image src={`${BASE_PATH}/logo.png`} alt={COMPANY} width={2685} height={729} priority className="h-14 w-auto self-start sm:h-20" />
+        <span className="text-sm font-semibold uppercase tracking-[0.22em] text-navy sm:text-base">{s.tagline}</span>
       </div>
 
       <div className="flex flex-1 flex-col justify-center px-8 sm:px-14">
