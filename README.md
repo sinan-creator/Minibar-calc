@@ -53,6 +53,19 @@ Tariffs and exchange rates are **desk estimates** with a reference year, never l
 each value as *Estimated · year* (with its source) or *Manual entry*, and the printed summary repeats the
 assumptions. Countries without an estimate require the salesperson to type the tariff.
 
+## Printed hand-out
+
+`npm run flyer` writes `print/*.html`: a one-page A4 comparison on a fixed 100-room example (English/USD and
+Turkish/TRY), built from the same calculation engine, with the rear-view photos, the facts, two charts, the
+savings strip and a QR code to the live app. Render to PDF with a Chromium browser, for example:
+
+```bash
+"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --headless=new --no-pdf-header-footer --print-to-pdf=print\elektromarla-minibar-comparison-en.pdf print\elektromarla-minibar-comparison-en.html
+```
+
+Assumptions (rooms, tariff, exchange rate, horizon) are the `VARIANTS` constants at the top of
+`scripts/make-flyer.mts`.
+
 ## Languages
 
 English by default, Turkish via the EN/TR switch in the header. All UI strings live in `src/lib/i18n.ts`

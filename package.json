@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "check": "node scripts/check-calc.mts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "flyer": "node scripts/make-flyer.mts"
   },
   "dependencies": {
     "next": "16.4.5",
