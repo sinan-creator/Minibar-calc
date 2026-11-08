@@ -62,6 +62,8 @@ const T = {
     chart2: (rooms: string, years: string) => `Total cost · ${rooms} rooms · ${years}`,
     purchase: "Solid: purchase price (all units)",
     electricity: "Light: electricity",
+    purchaseShort: "Purchase",
+    electricityShort: "Electricity",
     saves: (pct: string) => `Inverter saves ${pct}%`,
     stripTitle: (rooms: string, from: string, to: string) => `Switching ${rooms} rooms from ${from} to ${to}`,
     perYear: "saved every year",
@@ -92,6 +94,8 @@ const T = {
     chart2: (rooms: string, years: string) => `Toplam maliyet · ${rooms} oda · ${years}`,
     purchase: "Koyu: satın alma bedeli (tüm adetler)",
     electricity: "Açık: elektrik",
+    purchaseShort: "Satın alma",
+    electricityShort: "Elektrik",
     saves: (pct: string) => `Inverter %${pct} tasarruf`,
     stripTitle: (rooms: string, from: string, to: string) => `${rooms} odada ${from} yerine ${to}`,
     perYear: "her yıl tasarruf",
@@ -175,6 +179,7 @@ function render(v: Variant): string {
         <div class="vval ${isHero ? "accent" : ""}">${money(r.totalCost)}${isHero ? `<small>${esc(t.saves(f.number((1 - hero.totalCost / vsAbs.competitor.totalCost) * 100)))}</small>` : saving}</div>
         <div class="vtrack"><div class="vbar" style="height:${h}%"><div style="height:${100 - invest}%;background:${COLORS[r.tech.id]};opacity:.38"></div><div style="height:${invest}%;background:${COLORS[r.tech.id]}"></div></div></div>
         <div class="vlbl">${esc(techName(r.tech, v.lang))}</div>
+        <div class="vbreak"><span><i style="background:${COLORS[r.tech.id]}"></i>${esc(t.purchaseShort)} <b>${money(r.investment)}</b></span><span><i style="background:${COLORS[r.tech.id]};opacity:.38"></i>${esc(t.electricityShort)} <b>${money(r.totalCost - r.investment)}</b></span></div>
       </div>`;
     })
     .join("");
@@ -228,9 +233,13 @@ function render(v: Variant): string {
   .vval { font-size: 8.6pt; font-weight: 700; color: #1c2c59; height: 8mm; display: flex; flex-direction: column; justify-content: flex-end; }
   .vval.accent { color: #2b6cf6; }
   .vval small { font-weight: 500; font-size: 6.6pt; color: #5f6b7a; }
-  .vtrack { height: 21mm; display: flex; align-items: flex-end; margin-top: 1.5mm; }
+  .vtrack { height: 17mm; display: flex; align-items: flex-end; margin-top: 1.5mm; }
   .vbar { width: 100%; border-radius: 2mm 2mm 0 0; overflow: hidden; display: flex; flex-direction: column; }
-  .vlbl { margin-top: 1.4mm; font-size: 7.4pt; color: #111827; height: 7.5mm; line-height: 1.2; }
+  .vlbl { margin-top: 1.4mm; font-size: 7.4pt; color: #111827; height: 7.5mm; line-height: 1.2; font-weight: 600; }
+  .vbreak { display: grid; gap: .5mm; font-size: 6.4pt; color: #5f6b7a; text-align: left; justify-items: center; }
+  .vbreak span { white-space: nowrap; }
+  .vbreak b { color: #111827; font-weight: 600; }
+  .vbreak i { display: inline-block; width: 1.8mm; height: 1.8mm; border-radius: .4mm; margin-right: 1mm; vertical-align: -0.1mm; }
   .legend { margin-top: 2mm; font-size: 6.8pt; color: #5f6b7a; display: flex; gap: 4mm; }
   .legend i { display: inline-block; width: 2.4mm; height: 2.4mm; border-radius: .6mm; background: #1c2c59; vertical-align: -0.3mm; margin-right: 1.2mm; }
   .legend i.light { opacity: .38; }

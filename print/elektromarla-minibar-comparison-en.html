@@ -45,9 +45,13 @@
   .vval { font-size: 8.6pt; font-weight: 700; color: #1c2c59; height: 8mm; display: flex; flex-direction: column; justify-content: flex-end; }
   .vval.accent { color: #2b6cf6; }
   .vval small { font-weight: 500; font-size: 6.6pt; color: #5f6b7a; }
-  .vtrack { height: 21mm; display: flex; align-items: flex-end; margin-top: 1.5mm; }
+  .vtrack { height: 17mm; display: flex; align-items: flex-end; margin-top: 1.5mm; }
   .vbar { width: 100%; border-radius: 2mm 2mm 0 0; overflow: hidden; display: flex; flex-direction: column; }
-  .vlbl { margin-top: 1.4mm; font-size: 7.4pt; color: #111827; height: 7.5mm; line-height: 1.2; }
+  .vlbl { margin-top: 1.4mm; font-size: 7.4pt; color: #111827; height: 7.5mm; line-height: 1.2; font-weight: 600; }
+  .vbreak { display: grid; gap: .5mm; font-size: 6.4pt; color: #5f6b7a; text-align: left; justify-items: center; }
+  .vbreak span { white-space: nowrap; }
+  .vbreak b { color: #111827; font-weight: 600; }
+  .vbreak i { display: inline-block; width: 1.8mm; height: 1.8mm; border-radius: .4mm; margin-right: 1mm; vertical-align: -0.1mm; }
   .legend { margin-top: 2mm; font-size: 6.8pt; color: #5f6b7a; display: flex; gap: 4mm; }
   .legend i { display: inline-block; width: 2.4mm; height: 2.4mm; border-radius: .6mm; background: #1c2c59; vertical-align: -0.3mm; margin-right: 1.2mm; }
   .legend i.light { opacity: .38; }
@@ -130,14 +134,17 @@
         <div class="vval ">$78,200</div>
         <div class="vtrack"><div class="vbar" style="height:100%"><div style="height:84.0153452685422%;background:#a9b3c4;opacity:.38"></div><div style="height:15.9846547314578%;background:#a9b3c4"></div></div></div>
         <div class="vlbl">Absorption</div>
+        <div class="vbreak"><span><i style="background:#a9b3c4"></i>Purchase <b>$12,500</b></span><span><i style="background:#a9b3c4;opacity:.38"></i>Electricity <b>$65,700</b></span></div>
       </div><div class="vcol">
         <div class="vval ">$33,075</div>
         <div class="vtrack"><div class="vbar" style="height:42.295396419437346%"><div style="height:60.69538926681784%;background:#6f87a9;opacity:.38"></div><div style="height:39.30461073318216%;background:#6f87a9"></div></div></div>
         <div class="vlbl">Thermoelectric (Peltier)</div>
+        <div class="vbreak"><span><i style="background:#6f87a9"></i>Purchase <b>$13,000</b></span><span><i style="background:#6f87a9;opacity:.38"></i>Electricity <b>$20,075</b></span></div>
       </div><div class="vcol">
         <div class="vval accent">$27,490<small>Inverter saves 65%</small></div>
         <div class="vtrack"><div class="vbar" style="height:35.153452685421996%"><div style="height:34.521644234267%;background:#2b6cf6;opacity:.38"></div><div style="height:65.478355765733%;background:#2b6cf6"></div></div></div>
         <div class="vlbl">Inverter Compressor</div>
+        <div class="vbreak"><span><i style="background:#2b6cf6"></i>Purchase <b>$18,000</b></span><span><i style="background:#2b6cf6;opacity:.38"></i>Electricity <b>$9,490</b></span></div>
       </div></div>
       <div class="legend"><span><i></i>Solid: purchase price (all units)</span><span><i class="light"></i>Light: electricity · 10 years</span></div></div>
   </section>

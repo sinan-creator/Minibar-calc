@@ -45,9 +45,13 @@
   .vval { font-size: 8.6pt; font-weight: 700; color: #1c2c59; height: 8mm; display: flex; flex-direction: column; justify-content: flex-end; }
   .vval.accent { color: #2b6cf6; }
   .vval small { font-weight: 500; font-size: 6.6pt; color: #5f6b7a; }
-  .vtrack { height: 21mm; display: flex; align-items: flex-end; margin-top: 1.5mm; }
+  .vtrack { height: 17mm; display: flex; align-items: flex-end; margin-top: 1.5mm; }
   .vbar { width: 100%; border-radius: 2mm 2mm 0 0; overflow: hidden; display: flex; flex-direction: column; }
-  .vlbl { margin-top: 1.4mm; font-size: 7.4pt; color: #111827; height: 7.5mm; line-height: 1.2; }
+  .vlbl { margin-top: 1.4mm; font-size: 7.4pt; color: #111827; height: 7.5mm; line-height: 1.2; font-weight: 600; }
+  .vbreak { display: grid; gap: .5mm; font-size: 6.4pt; color: #5f6b7a; text-align: left; justify-items: center; }
+  .vbreak span { white-space: nowrap; }
+  .vbreak b { color: #111827; font-weight: 600; }
+  .vbreak i { display: inline-block; width: 1.8mm; height: 1.8mm; border-radius: .4mm; margin-right: 1mm; vertical-align: -0.1mm; }
   .legend { margin-top: 2mm; font-size: 6.8pt; color: #5f6b7a; display: flex; gap: 4mm; }
   .legend i { display: inline-block; width: 2.4mm; height: 2.4mm; border-radius: .6mm; background: #1c2c59; vertical-align: -0.3mm; margin-right: 1.2mm; }
   .legend i.light { opacity: .38; }
@@ -130,14 +134,17 @@
         <div class="vval ">₺3.023.050</div>
         <div class="vtrack"><div class="vbar" style="height:100%"><div style="height:79.32551562164039%;background:#a9b3c4;opacity:.38"></div><div style="height:20.674484378359605%;background:#a9b3c4"></div></div></div>
         <div class="vlbl">Absorpsiyonlu</div>
+        <div class="vbreak"><span><i style="background:#a9b3c4"></i>Satın alma <b>₺625.000</b></span><span><i style="background:#a9b3c4;opacity:.38"></i>Elektrik <b>₺2.398.050</b></span></div>
       </div><div class="vcol">
         <div class="vval ">₺1.382.738</div>
         <div class="vtrack"><div class="vbar" style="height:45.73981574899522%"><div style="height:52.99180068523491%;background:#6f87a9;opacity:.38"></div><div style="height:47.00819931476509%;background:#6f87a9"></div></div></div>
         <div class="vlbl">Termoelektrik (Peltier)</div>
+        <div class="vbreak"><span><i style="background:#6f87a9"></i>Satın alma <b>₺650.000</b></span><span><i style="background:#6f87a9;opacity:.38"></i>Elektrik <b>₺732.738</b></span></div>
       </div><div class="vcol">
         <div class="vval accent">₺1.246.385<small>Inverter %59 tasarruf</small></div>
         <div class="vtrack"><div class="vbar" style="height:41.22938753907477%"><div style="height:27.79117206962536%;background:#2b6cf6;opacity:.38"></div><div style="height:72.20882793037464%;background:#2b6cf6"></div></div></div>
         <div class="vlbl">Inverter Kompresörlü</div>
+        <div class="vbreak"><span><i style="background:#2b6cf6"></i>Satın alma <b>₺900.000</b></span><span><i style="background:#2b6cf6;opacity:.38"></i>Elektrik <b>₺346.385</b></span></div>
       </div></div>
       <div class="legend"><span><i></i>Koyu: satın alma bedeli (tüm adetler)</span><span><i class="light"></i>Açık: elektrik · 10 yıl</span></div></div>
   </section>

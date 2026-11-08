@@ -56,6 +56,16 @@ export function OwnershipBarChart({ result, currency, years }: ChartProps) {
                 </div>
               </div>
               <div className="mt-3 text-center text-sm font-medium text-ink">{techName(r.tech, lang)}</div>
+              <div className="num mt-1 space-y-0.5 text-center text-[11px] text-slate-ui">
+                <div>
+                  <span className="mr-1 inline-block h-2 w-2 rounded-sm align-middle" style={{ background: color }} />
+                  {s.purchase} <span className="font-semibold text-ink">{f.money(r.investment, currency)}</span>
+                </div>
+                <div>
+                  <span className="mr-1 inline-block h-2 w-2 rounded-sm align-middle" style={{ background: color, opacity: 0.38 }} />
+                  {s.electricity} <span className="font-semibold text-ink">{f.money(r.totalCost - r.investment, currency)}</span>
+                </div>
+              </div>
             </div>
           );
         })}
