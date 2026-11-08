@@ -34,6 +34,7 @@ export function ComparisonTable({ result, currency, years, fxRate }: Props) {
   const rows: { label: string; cells: (string | { main: string; sub?: string })[] }[] = [
     { label: s.coolingPrinciple, cells: result.results.map((r) => s.facts[r.tech.id].principle) },
     { label: s.noiseLevel, cells: result.results.map((r) => s.facts[r.tech.id].noise) },
+    { label: s.coolingPerformance, cells: result.results.map((r) => s.facts[r.tech.id].performance) },
     { label: s.idealFor, cells: result.results.map((r) => s.facts[r.tech.id].idealFor) },
     { label: s.dailyPerUnit, cells: result.results.map((r) => `${f.number(r.tech.dailyKwh, 3)} kWh`) },
     {

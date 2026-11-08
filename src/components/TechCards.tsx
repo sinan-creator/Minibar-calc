@@ -120,6 +120,7 @@ function TechCard({
       <dl className="my-6 space-y-4">
         <Row label={s.cooling} value={facts.principle} small />
         <Row label={s.noiseLevel} value={facts.noise} small />
+        <Row label={s.coolingPerformance} value={facts.performance} small />
         <Row label={s.pricePerUnit} value={f.money(r.tech.unitPriceUsd * fxRate, currency)} sub={showUsd ? f.money(r.tech.unitPriceUsd, "USD") : undefined} />
         <Row label={s.initialInvestment} value={f.money(r.investment, currency)} sub={showUsd ? f.money(r.investmentUsd, "USD") : undefined} />
         <Row label={s.annualEnergy} value={f.kwh(r.annualKwh)} sub={s.perUnitPerDay(f.number(r.tech.dailyKwh, 3))} />

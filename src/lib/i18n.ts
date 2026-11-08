@@ -12,7 +12,7 @@ export const LOCALES: Record<Lang, string> = { en: "en", tr: "tr-TR" };
 const STORAGE_KEY = "elektromarla.minibar.lang";
 
 type TechText = Record<TechnologyId, string>;
-type TechFacts = Record<TechnologyId, { principle: string; noise: string; idealFor: string }>;
+type TechFacts = Record<TechnologyId, { principle: string; noise: string; performance: string; idealFor: string }>;
 
 const en = {
   langLabel: "EN",
@@ -47,13 +47,13 @@ const en = {
   techNames: { absorption: "Absorption", peltier: "Thermoelectric (Peltier)", inverter: "Inverter Compressor" } as TechText,
   blurbs: {
     absorption: "Completely silent with no moving parts. The price of that silence is energy.",
-    peltier: "Silent, with no compressor or gas, so it is cheap to buy. Needs constant power and struggles in warm rooms.",
+    peltier: "Silent and cheap to buy, with no compressor or gas. Cooling is limited and drops as the room warms up; not a match for the Inverter in warm climates.",
     inverter: "Variable-speed compressor that runs only as hard as needed. A+++ efficiency, nearly silent.",
   } as TechText,
   facts: {
-    absorption: { principle: "Ammonia absorption, heating element", noise: "Silent · no moving parts", idealFor: "Total silence" },
-    peltier: { principle: "Thermoelectric module", noise: "Silent · no compressor", idealFor: "Silence on a budget, cool rooms" },
-    inverter: { principle: "Variable-speed compressor", noise: "26–29 dB", idealFor: "Lowest running cost" },
+    absorption: { principle: "Ammonia absorption, heating element", noise: "Silent · no moving parts", performance: "Moderate · slow pull-down, sensitive to ambient heat", idealFor: "Total silence" },
+    peltier: { principle: "Thermoelectric module", noise: "Silent · no compressor", performance: "Limited · depends on room temperature", idealFor: "Silence on a budget, cool rooms" },
+    inverter: { principle: "Variable-speed compressor", noise: "26–29 dB", performance: "Strong · stable at any room temperature", idealFor: "Lowest running cost" },
   } as TechFacts,
   rearView: "Rear view",
   mostEfficient: "Most efficient",
@@ -88,6 +88,7 @@ const en = {
   // cards
   cooling: "Cooling",
   noiseLevel: "Noise level",
+  coolingPerformance: "Cooling performance",
   pricePerUnit: "Purchase price per unit",
   initialInvestment: "Initial investment",
   annualEnergy: "Annual energy",
@@ -260,13 +261,13 @@ const tr: Strings = {
   techNames: { absorption: "Absorpsiyonlu", peltier: "Termoelektrik (Peltier)", inverter: "Inverter Kompresörlü" },
   blurbs: {
     absorption: "Tamamen sessiz, hareketli parçası yok. Bu sessizliğin bedeli enerjidir.",
-    peltier: "Sessiz; kompresörü ve gazı olmadığı için satın alması ucuz. Sürekli enerji ister, sıcak odalarda zorlanır.",
+    peltier: "Sessiz ve satın alması ucuz; kompresörü ve gazı yok. Soğutma gücü sınırlıdır, oda ısındıkça düşer; sıcak iklimlerde Inverter ile boy ölçüşemez.",
     inverter: "İhtiyaca göre hız değiştiren kompresör. A+++ verimlilik, neredeyse sessiz.",
   },
   facts: {
-    absorption: { principle: "Rezistanslı, amonyaklı soğutma", noise: "Sessiz · hareketli parça yok", idealFor: "Tam sessizlik" },
-    peltier: { principle: "Termoelektrik modül", noise: "Sessiz · kompresör yok", idealFor: "Bütçeli sessizlik, serin odalar" },
-    inverter: { principle: "Değişken hızlı kompresör", noise: "26–29 dB", idealFor: "En düşük işletme maliyeti" },
+    absorption: { principle: "Rezistanslı, amonyaklı soğutma", noise: "Sessiz · hareketli parça yok", performance: "Orta · yavaş soğur, ortam ısısına duyarlı", idealFor: "Tam sessizlik" },
+    peltier: { principle: "Termoelektrik modül", noise: "Sessiz · kompresör yok", performance: "Sınırlı · ortam sıcaklığına bağlı", idealFor: "Bütçeli sessizlik, serin odalar" },
+    inverter: { principle: "Değişken hızlı kompresör", noise: "26–29 dB", performance: "Güçlü · her oda sıcaklığında sabit", idealFor: "En düşük işletme maliyeti" },
   },
   rearView: "Arka görünüş",
   mostEfficient: "En verimli",
@@ -299,6 +300,7 @@ const tr: Strings = {
   errFxPositive: "Pozitif bir kur girin.",
   cooling: "Soğutma",
   noiseLevel: "Ses seviyesi",
+  coolingPerformance: "Soğutma performansı",
   pricePerUnit: "Birim satın alma fiyatı",
   initialInvestment: "İlk yatırım",
   annualEnergy: "Yıllık enerji",
