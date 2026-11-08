@@ -85,7 +85,7 @@ export const FX_REFERENCE: Record<string, FxReference> = {
   EUR: { rate: 0.86, year: 2025, source: "Desk estimate, 2025 market average" },
   GBP: { rate: 0.76, year: 2025, source: "Desk estimate, 2025 market average" },
   CHF: { rate: 0.8, year: 2025, source: "Desk estimate, 2025 market average" },
-  TRY: { rate: 42, year: 2025, source: "Desk estimate, late-2025 market rate (volatile: confirm daily)" },
+  TRY: { rate: 50, year: 2026, source: "Desk estimate, 2026 market rate (volatile: confirm daily)" },
   EGP: { rate: 48, year: 2025, source: "Desk estimate, 2025 market rate (volatile: confirm daily)" },
   SAR: { rate: 3.75, year: 2025, source: "Official USD peg", pegged: true },
   AED: { rate: 3.6725, year: 2025, source: "Official USD peg", pegged: true },

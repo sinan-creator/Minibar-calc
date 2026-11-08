@@ -466,7 +466,7 @@ export const strings = (lang: Lang): Strings => DICT[lang];
 const SOURCE_PHRASES_TR: ReadonlyArray<readonly [string, string]> = [
   ["Desk estimate from Eurostat non-household electricity prices incl. taxes", "Eurostat hane dışı elektrik fiyatlarından (vergiler dahil) masa başı tahmin"],
   ["Desk estimate from EPDK regulated business (ticarethane) tariff incl. taxes", "EPDK düzenlemeli ticarethane tarifesinden (vergiler dahil) masa başı tahmin"],
-  ["Desk estimate, late-2025 market rate (volatile: confirm daily)", "Masa başı tahmin, 2025 sonu piyasa kuru (oynak: günlük teyit edin)"],
+  ["Desk estimate, 2026 market rate (volatile: confirm daily)", "Masa başı tahmin, 2026 piyasa kuru (oynak: günlük teyit edin)"],
   ["Desk estimate, 2025 market rate (volatile: confirm daily)", "Masa başı tahmin, 2025 piyasa kuru (oynak: günlük teyit edin)"],
   ["Desk estimate, 2025 market average (volatile)", "Masa başı tahmin, 2025 piyasa ortalaması (oynak)"],
   ["Desk estimate, 2025 market average", "Masa başı tahmin, 2025 piyasa ortalaması"],
