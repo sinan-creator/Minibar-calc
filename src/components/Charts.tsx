@@ -31,7 +31,7 @@ export function OwnershipBarChart({ result, currency, years }: ChartProps) {
 
   return (
     <Panel title={title} subtitle={s.tcoSubtitle}>
-      <div className="mt-8 flex items-end gap-4 sm:gap-8">
+      <div className="mt-8 flex items-start gap-4 sm:gap-8">
         {result.results.map((r) => {
           const pct = (r.totalCost / max) * 100;
           const investPct = r.totalCost > 0 ? (r.investment / r.totalCost) * 100 : 0;
@@ -62,7 +62,7 @@ export function OwnershipBarChart({ result, currency, years }: ChartProps) {
       </div>
       <div className="mt-6 flex flex-wrap gap-5 text-xs text-slate-ui">
         <span className="inline-flex items-center gap-2">
-          <span className="h-3 w-3 rounded-sm bg-navy" /> {s.purchase}
+          <span className="h-3 w-3 rounded-sm bg-navy" /> {s.legendPurchase}
         </span>
         <span className="inline-flex items-center gap-2">
           <span className="h-3 w-3 rounded-sm bg-navy/35" /> {s.electricityOver(f.years(years))}

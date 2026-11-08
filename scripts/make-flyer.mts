@@ -60,8 +60,8 @@ const T = {
     total: (years: string) => `Cost of ownership · ${years}`,
     chart1: "Electricity per minibar, per year",
     chart2: (rooms: string, years: string) => `Total cost · ${rooms} rooms · ${years}`,
-    purchase: "Purchase",
-    electricity: "Electricity",
+    purchase: "Solid: purchase price (all units)",
+    electricity: "Light: electricity",
     saves: (pct: string) => `Inverter saves ${pct}%`,
     stripTitle: (rooms: string, from: string, to: string) => `Switching ${rooms} rooms from ${from} to ${to}`,
     perYear: "saved every year",
@@ -90,8 +90,8 @@ const T = {
     total: (years: string) => `Sahip olma maliyeti · ${years}`,
     chart1: "Minibar başına yıllık elektrik",
     chart2: (rooms: string, years: string) => `Toplam maliyet · ${rooms} oda · ${years}`,
-    purchase: "Satın alma",
-    electricity: "Elektrik",
+    purchase: "Koyu: satın alma bedeli (tüm adetler)",
+    electricity: "Açık: elektrik",
     saves: (pct: string) => `Inverter %${pct} tasarruf`,
     stripTitle: (rooms: string, from: string, to: string) => `${rooms} odada ${from} yerine ${to}`,
     perYear: "her yıl tasarruf",
@@ -223,14 +223,14 @@ function render(v: Variant): string {
   .track { height: 5.2mm; background: #f4f6f9; border-radius: 3mm; overflow: hidden; }
   .fill { display: block; height: 100%; border-radius: 3mm; }
   .val { text-align: right; font-weight: 600; }
-  .vchart { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; align-items: end; }
+  .vchart { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; align-items: start; }
   .vcol { text-align: center; }
   .vval { font-size: 8.6pt; font-weight: 700; color: #1c2c59; height: 8mm; display: flex; flex-direction: column; justify-content: flex-end; }
   .vval.accent { color: #2b6cf6; }
   .vval small { font-weight: 500; font-size: 6.6pt; color: #5f6b7a; }
   .vtrack { height: 21mm; display: flex; align-items: flex-end; margin-top: 1.5mm; }
   .vbar { width: 100%; border-radius: 2mm 2mm 0 0; overflow: hidden; display: flex; flex-direction: column; }
-  .vlbl { margin-top: 1.4mm; font-size: 7.4pt; color: #111827; }
+  .vlbl { margin-top: 1.4mm; font-size: 7.4pt; color: #111827; height: 7.5mm; line-height: 1.2; }
   .legend { margin-top: 2mm; font-size: 6.8pt; color: #5f6b7a; display: flex; gap: 4mm; }
   .legend i { display: inline-block; width: 2.4mm; height: 2.4mm; border-radius: .6mm; background: #1c2c59; vertical-align: -0.3mm; margin-right: 1.2mm; }
   .legend i.light { opacity: .38; }

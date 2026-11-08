@@ -40,14 +40,14 @@
   .track { height: 5.2mm; background: #f4f6f9; border-radius: 3mm; overflow: hidden; }
   .fill { display: block; height: 100%; border-radius: 3mm; }
   .val { text-align: right; font-weight: 600; }
-  .vchart { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; align-items: end; }
+  .vchart { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; align-items: start; }
   .vcol { text-align: center; }
   .vval { font-size: 8.6pt; font-weight: 700; color: #1c2c59; height: 8mm; display: flex; flex-direction: column; justify-content: flex-end; }
   .vval.accent { color: #2b6cf6; }
   .vval small { font-weight: 500; font-size: 6.6pt; color: #5f6b7a; }
   .vtrack { height: 21mm; display: flex; align-items: flex-end; margin-top: 1.5mm; }
   .vbar { width: 100%; border-radius: 2mm 2mm 0 0; overflow: hidden; display: flex; flex-direction: column; }
-  .vlbl { margin-top: 1.4mm; font-size: 7.4pt; color: #111827; }
+  .vlbl { margin-top: 1.4mm; font-size: 7.4pt; color: #111827; height: 7.5mm; line-height: 1.2; }
   .legend { margin-top: 2mm; font-size: 6.8pt; color: #5f6b7a; display: flex; gap: 4mm; }
   .legend i { display: inline-block; width: 2.4mm; height: 2.4mm; border-radius: .6mm; background: #1c2c59; vertical-align: -0.3mm; margin-right: 1.2mm; }
   .legend i.light { opacity: .38; }
@@ -139,7 +139,7 @@
         <div class="vtrack"><div class="vbar" style="height:35.153452685421996%"><div style="height:34.521644234267%;background:#2b6cf6;opacity:.38"></div><div style="height:65.478355765733%;background:#2b6cf6"></div></div></div>
         <div class="vlbl">Inverter Compressor</div>
       </div></div>
-      <div class="legend"><span><i></i>Purchase</span><span><i class="light"></i>Electricity · 10 years</span></div></div>
+      <div class="legend"><span><i></i>Solid: purchase price (all units)</span><span><i class="light"></i>Light: electricity · 10 years</span></div></div>
   </section>
   <section class="strip">
     <div><h4>Switching 100 rooms from Absorption to Inverter Compressor</h4>
