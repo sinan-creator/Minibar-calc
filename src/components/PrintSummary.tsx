@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useSyncExternalStore } from "react";
 import type { CalcResult, Comparison } from "@/lib/calc";
 import { countryName, type Country } from "@/lib/countries";
-import { BASE_PATH, COMPANY, HERO_ID, type MinibarSettings } from "@/lib/defaults";
+import { BASE_PATH, COMPANY, CONTACT, HERO_ID, type MinibarSettings } from "@/lib/defaults";
 import { techName } from "@/lib/i18n";
 import type { SalesInputs } from "@/lib/inputs";
 import { fxFor, tariffFor } from "@/lib/tariffs";
@@ -162,7 +162,12 @@ export function PrintSummary({ inputs, country, result, comparison, settings, ta
         </div>
       </section>
 
-      <footer className="mt-6 border-t border-line pt-3 text-[9.5px] leading-snug text-slate-ui">{s.disclaimer}</footer>
+      <footer className="mt-6 border-t border-line pt-3 text-[9.5px] leading-snug text-slate-ui">
+        <p className="mb-1.5 text-[11px] font-medium text-navy">
+          {COMPANY} · {s.tagline} · {CONTACT.phone} · {CONTACT.email} · {CONTACT.website.replace(/^https?:\/\//, "")}
+        </p>
+        {s.disclaimer}
+      </footer>
     </div>
   );
 }
