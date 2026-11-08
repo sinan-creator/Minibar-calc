@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
+import { Analytics } from "@/components/Analytics";
 import { RegisterServiceWorker } from "@/components/RegisterServiceWorker";
 import { APP_NAME, BASE_PATH } from "@/lib/defaults";
 
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="flex min-h-full flex-col font-sans">
         {children}
         <RegisterServiceWorker />
+        <Analytics />
       </body>
     </html>
   );

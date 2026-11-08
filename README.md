@@ -69,6 +69,16 @@ carried in the URL as `lang=tr` so QR links open in the same language.
   deployed app rather than the kiosk's localhost. The same URL format works as a deep link from the website.
 - **Energy saved**: one large kWh figure per year and over the selected period for the chosen comparison.
 
+## Analytics
+
+Optional, build-time: `NEXT_PUBLIC_GTM_ID` loads a Google Tag Manager container (the deployed build uses the
+elektromarla.com container `GTM-K785GZH`, so visits land in the same Google Analytics property as the website);
+`NEXT_PUBLIC_GA_ID` loads GA4 directly instead. Custom events are sent through `track()` in `src/lib/analytics.ts`:
+`country_select`, `qr_open`, `contact_email`, `contact_whatsapp`, `contact_call`, `print_summary`,
+`language_change`, `attract_start`, `reset`. With GTM, add triggers for these dataLayer events to forward them
+to GA4; with a direct GA4 ID they arrive automatically. EU visitors of the web version need a cookie consent
+banner before analytics may load; the fair kiosk does not.
+
 ## Admin Settings
 
 A discreet gear icon in the footer opens a PIN-protected panel where the administrator can edit, for each

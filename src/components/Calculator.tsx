@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { track } from "@/lib/analytics";
 import { calculate, toUsdResult } from "@/lib/calc";
 import { findCountry } from "@/lib/countries";
 import { ATTRACT_IDLE_MS, DEFAULT_COUNTRY, HERO_ID, MIN_CHART_YEARS } from "@/lib/defaults";
@@ -92,7 +93,10 @@ export function Calculator() {
     : null;
 
   const update = (patch: Partial<SalesInputs>) => setInputs((s) => ({ ...s, ...patch }));
-  const selectCountry = (code: string) => setInputs((s) => ({ ...s, ...marketDefaults(code) }));
+  const selectCountry = (code: string) => {
+    track("country_select", { country: code });
+    setInputs((s) => ({ ...s, ...marketDefaults(code) }));
+  };
   const reset = () => {
     setEdited(initialInputs());
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -154,6 +158,7 @@ export function Calculator() {
           <AttractMode
             settings={settings}
             onStart={() => {
+              track("attract_start");
               setIdle(false);
               setPreviewDismissed(true);
               reset();

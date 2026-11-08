@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { track } from "@/lib/analytics";
 import type { Comparison } from "@/lib/calc";
 import { contactLinks } from "@/lib/contact";
 import type { Country } from "@/lib/countries";
@@ -31,21 +32,21 @@ export function ContactButtons({ mailto, whatsapp, tel, dark }: { mailto: string
   const secondary = dark ? "border border-white/25 text-white hover:bg-white/10" : "border border-line bg-white text-navy hover:bg-mist";
   return (
     <div className="flex flex-wrap gap-3">
-      <a href={mailto} className={`${action} ${primary}`}>
+      <a href={mailto} onClick={() => track("contact_email")} className={`${action} ${primary}`}>
         <svg aria-hidden viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6">
           <rect x="2.5" y="4.5" width="15" height="11" rx="2" />
           <path d="M3 6l7 5 7-5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         {s.emailSummary}
       </a>
-      <a href={whatsapp} target="_blank" rel="noopener noreferrer" className={`${action} ${secondary}`}>
+      <a href={whatsapp} target="_blank" rel="noopener noreferrer" onClick={() => track("contact_whatsapp")} className={`${action} ${secondary}`}>
         <svg aria-hidden viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6">
           <path d="M3 17l1.2-3.6A7 7 0 1 1 6.9 16L3 17z" strokeLinejoin="round" />
           <path d="M7.5 7.5c0 3 2 5 5 5l1-1.2-1.6-.9-.8.8c-1-.4-1.8-1.2-2.2-2.2l.8-.8-.9-1.6L7.5 7.5z" strokeLinejoin="round" />
         </svg>
         {s.whatsapp}
       </a>
-      <a href={tel} className={`${action} ${secondary}`}>
+      <a href={tel} onClick={() => track("contact_call")} className={`${action} ${secondary}`}>
         <svg aria-hidden viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6">
           <path d="M4 3.5h3l1.5 3.5-2 1.5a9 9 0 0 0 5 5l1.5-2 3.5 1.5v3a1.5 1.5 0 0 1-1.6 1.5A13 13 0 0 1 2.5 5.1 1.5 1.5 0 0 1 4 3.5z" strokeLinejoin="round" />
         </svg>

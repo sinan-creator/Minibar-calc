@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { track } from "@/lib/analytics";
 import { BASE_PATH, COMPANY } from "@/lib/defaults";
 import { LANGS, strings, type Lang } from "@/lib/i18n";
 import { useI18n } from "./I18nProvider";
@@ -27,10 +28,19 @@ export function Header({ onReset, onPrint, onShare, onLang }: Props) {
             ariaLabel={s.language}
             size="sm"
             value={lang}
-            onChange={onLang}
+            onChange={(l) => {
+              track("language_change", { lang: l });
+              onLang(l);
+            }}
             options={LANGS.map((l) => ({ value: l, label: strings(l).langLabel }))}
           />
-          <Button onClick={onShare} aria-label={s.shareQr}>
+          <Button
+            onClick={() => {
+              track("qr_open");
+              onShare();
+            }}
+            aria-label={s.shareQr}
+          >
             <svg aria-hidden viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6">
               <rect x="3" y="3" width="5" height="5" rx="1" />
               <rect x="12" y="3" width="5" height="5" rx="1" />
@@ -40,9 +50,22 @@ export function Header({ onReset, onPrint, onShare, onLang }: Props) {
             <span className="hidden sm:inline">{s.qr}</span>
           </Button>
           <div className="hidden md:block">
-            <Button onClick={onPrint}>{s.printSummary}</Button>
+            <Button
+              onClick={() => {
+                track("print_summary");
+                onPrint();
+              }}
+            >
+              {s.printSummary}
+            </Button>
           </div>
-          <Button variant="primary" onClick={onReset}>
+          <Button
+            variant="primary"
+            onClick={() => {
+              track("reset");
+              onReset();
+            }}
+          >
             <span className="sm:hidden">{s.reset}</span>
             <span className="hidden sm:inline">{s.resetForNext}</span>
           </Button>
