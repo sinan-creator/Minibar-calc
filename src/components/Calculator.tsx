@@ -15,6 +15,7 @@ import { Header } from "./Header";
 import { Headline } from "./Headline";
 import { InputsPanel } from "./InputsPanel";
 import { PrintSummary } from "./PrintSummary";
+import { Recommendation } from "./Recommendation";
 import { ShareQr } from "./ShareQr";
 import { TechCards } from "./TechCards";
 
@@ -100,6 +101,7 @@ export function Calculator() {
 
             <section className="min-w-0 space-y-6">
               <TechCards result={result} comparison={comparison} currency={country.currency} years={inputs.years} fxRate={numeric.fxRate} />
+              <Recommendation result={result} comparison={comparison} years={inputs.years} />
               <EnergySaved comparison={comparison} years={inputs.years} />
               <div className="grid gap-6 2xl:grid-cols-2">
                 <OwnershipBarChart result={result} comparison={comparison} currency={country.currency} years={inputs.years} />

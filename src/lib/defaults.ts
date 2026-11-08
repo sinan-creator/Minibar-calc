@@ -42,14 +42,14 @@ export const DEFAULT_SETTINGS: MinibarSettings = {
 /** Short marketing descriptions, keyed by technology id (not editable). */
 export const TECH_BLURBS: Record<TechnologyId, string> = {
   absorption: "Completely silent with no moving parts. The price of that silence is energy.",
-  peltier: "No compressor or gas, so it is cheap to buy. Needs constant power and struggles in warm rooms.",
+  peltier: "Silent, with no compressor or gas, so it is cheap to buy. Needs constant power and struggles in warm rooms.",
   inverter: "Variable-speed compressor that runs only as hard as needed. A+++ efficiency, nearly silent.",
 };
 
 /** Fixed product facts shown on cards and in the comparison table (from the Elektromarla product pages). */
 export const TECH_FACTS: Record<TechnologyId, { principle: string; noise: string; idealFor: string }> = {
-  absorption: { principle: "Ammonia absorption, heating element", noise: "0 dB · fully silent", idealFor: "Total silence" },
-  peltier: { principle: "Thermoelectric module", noise: "≈ 30 dB", idealFor: "Budget projects in cool climates" },
+  absorption: { principle: "Ammonia absorption, heating element", noise: "Silent · no moving parts", idealFor: "Total silence" },
+  peltier: { principle: "Thermoelectric module", noise: "Silent · no compressor", idealFor: "Silence on a budget, cool rooms" },
   inverter: { principle: "Variable-speed compressor", noise: "26–29 dB", idealFor: "Lowest running cost" },
 };
 
