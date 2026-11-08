@@ -65,7 +65,7 @@ assert.ok(heroOff.ok && heroOff.value.technologies.find((t) => t.id === "inverte
 // Visitor's own minibar: price entered in local currency, converted to USD; becomes a fourth technology.
 const withCustom = {
   ...initialInputs("TR"),
-  custom: { enabled: true, name: "Dometic HiPro", dailyKwh: "0.75", unitPrice: "8400" },
+  custom: { enabled: true, name: "Existing minibar", dailyKwh: "0.75", unitPrice: "8400" },
 };
 assert.deepEqual(validateInputs(withCustom), {}, "custom inputs validate");
 const tech = customTechnology(withCustom, 42)!;
