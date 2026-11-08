@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { calculate } from "../src/lib/calc.ts";
 import { DEFAULT_SETTINGS } from "../src/lib/defaults.ts";
-import { customTechnology, fromSearchParams, initialInputs, toSearchParams, validateInputs } from "../src/lib/inputs.ts";
+import { fromSearchParams, initialInputs, toSearchParams } from "../src/lib/inputs.ts";
 import { validateSettings } from "../src/lib/settings.ts";
 
 const close = (a: number, b: number, msg: string) => assert.ok(Math.abs(a - b) < 1e-6, `${msg}: ${a} vs ${b}`);
@@ -62,24 +62,9 @@ const heroOff = validateSettings({
 });
 assert.ok(heroOff.ok && heroOff.value.technologies.find((t) => t.id === "inverter")!.active, "hero forced active");
 
-// Visitor's own minibar: price entered in local currency, converted to USD; becomes a fourth technology.
-const withCustom = {
-  ...initialInputs("TR"),
-  custom: { enabled: true, name: "Existing minibar", dailyKwh: "0.75", unitPrice: "8400" },
-};
-assert.deepEqual(validateInputs(withCustom), {}, "custom inputs validate");
-const tech = customTechnology(withCustom, 42)!;
-close(tech.unitPriceUsd, 200, "custom price converted to USD");
-const four = calculate(
-  { version: 1, technologies: [...DEFAULT_SETTINGS.technologies.slice(0, 2), tech, DEFAULT_SETTINGS.technologies[2]] },
-  { rooms: 100, tariff: 4.9, fxRate: 42, years: 5 },
-);
-assert.equal(four.comparisons.length, 3, "custom minibar compared as well");
-assert.equal(customTechnology(initialInputs(), 42), null, "custom disabled by default");
-
 // URL round trip for QR codes and deep links.
-const restored = fromSearchParams(`?${toSearchParams(withCustom).toString()}`);
-assert.deepEqual(restored, withCustom, "inputs survive the URL round trip");
+const sample = { ...initialInputs("DE"), rooms: "150", tariff: "0,31", tariffKind: "manual" as const, years: 10 as const, mode: "peltier" as const };
+assert.deepEqual(fromSearchParams(`?${toSearchParams(sample).toString()}`), sample, "inputs survive the URL round trip");
 assert.deepEqual(fromSearchParams("?c=ZZ&r=abc&y=7"), initialInputs(), "garbage parameters fall back to defaults");
 
 console.log("check-calc: all assertions passed");

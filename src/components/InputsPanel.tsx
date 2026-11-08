@@ -1,11 +1,11 @@
 "use client";
 
 import type { Country } from "@/lib/countries";
-import { CUSTOM_DEFAULT_NAME, PERIOD_OPTIONS, ROOM_LIMITS, TECH_LIMITS, type PeriodYears } from "@/lib/defaults";
-import type { CustomMinibar, InputErrors, SalesInputs } from "@/lib/inputs";
+import { PERIOD_OPTIONS, ROOM_LIMITS, type PeriodYears } from "@/lib/defaults";
+import type { InputErrors, SalesInputs } from "@/lib/inputs";
 import { fxFor, tariffFor } from "@/lib/tariffs";
 import { CountrySelect } from "./CountrySelect";
-import { Field, Segmented, SourceTag, Switch, plural } from "./ui";
+import { Field, Segmented, SourceTag, plural } from "./ui";
 
 interface Props {
   inputs: SalesInputs;
@@ -30,8 +30,6 @@ export function InputsPanel({ inputs, country, errors, onChange, onSelectCountry
   const rooms = Number(inputs.rooms) || 0;
   const stepRooms = (delta: number) =>
     onChange({ rooms: String(Math.min(ROOM_LIMITS.max, Math.max(ROOM_LIMITS.min, rooms + delta))) });
-  const custom = inputs.custom;
-  const setCustom = (patch: Partial<CustomMinibar>) => onChange({ custom: { ...custom, ...patch } });
 
   return (
     <div className="rounded-3xl border border-line bg-white p-6 sm:p-7">
@@ -138,53 +136,6 @@ export function InputsPanel({ inputs, country, errors, onChange, onSelectCountry
             className="w-full"
           />
         </Field>
-      </div>
-
-      <div className="mt-6 border-t border-line pt-6">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <div className="text-sm font-medium text-ink">Compare with the customer&apos;s current minibar</div>
-            <div className="text-xs text-slate-ui">Adds a fourth column from the figures on the rating label.</div>
-          </div>
-          <Switch on={custom.enabled} label="Compare with the customer's current minibar" onChange={() => setCustom({ enabled: !custom.enabled })} />
-        </div>
-        {custom.enabled && (
-          <div className="mt-4 grid gap-4 md:grid-cols-3 xl:grid-cols-1">
-            <Field label="Model name" htmlFor="custom-name">
-              <input
-                id="custom-name"
-                className="input"
-                maxLength={TECH_LIMITS.nameMaxLength}
-                placeholder={CUSTOM_DEFAULT_NAME}
-                value={custom.name}
-                onChange={(e) => setCustom({ name: e.target.value })}
-              />
-            </Field>
-            <Field label="Consumption (kWh/day)" htmlFor="custom-kwh" error={errors.customKwh}>
-              <input
-                id="custom-kwh"
-                className="input"
-                inputMode="decimal"
-                aria-invalid={Boolean(errors.customKwh)}
-                placeholder="e.g. 0.75"
-                value={custom.dailyKwh}
-                onChange={(e) => setCustom({ dailyKwh: e.target.value })}
-              />
-            </Field>
-            <Field label={`Price per unit (${country.currency})`} htmlFor="custom-price" error={errors.customPrice}>
-              <input
-                id="custom-price"
-                className="input"
-                inputMode="decimal"
-                aria-invalid={Boolean(errors.customPrice)}
-                placeholder="0 = keep existing units"
-                value={custom.unitPrice}
-                onChange={(e) => setCustom({ unitPrice: e.target.value })}
-              />
-              <p className="mt-2 text-xs text-slate-ui">Leave at 0 to compare against keeping the existing units.</p>
-            </Field>
-          </div>
-        )}
       </div>
     </div>
   );

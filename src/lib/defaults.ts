@@ -6,8 +6,7 @@
  * current settings via useSettings().
  */
 
-/** "custom" is the visitor's own minibar, entered per customer at the stand (not managed by the admin). */
-export type TechnologyId = "absorption" | "peltier" | "inverter" | "custom";
+export type TechnologyId = "absorption" | "peltier" | "inverter";
 
 export interface Technology {
   id: TechnologyId;
@@ -28,10 +27,7 @@ export interface MinibarSettings {
 
 /** The technology every comparison is measured against. It cannot be deactivated. */
 export const HERO_ID: TechnologyId = "inverter";
-export const CUSTOM_ID: TechnologyId = "custom";
-export const CUSTOM_DEFAULT_NAME = "Your current minibar";
 
-/** Technologies managed in Admin Settings. */
 export const TECHNOLOGY_IDS: readonly TechnologyId[] = ["absorption", "peltier", "inverter"];
 
 export const DEFAULT_SETTINGS: MinibarSettings = {
@@ -48,7 +44,6 @@ export const TECH_BLURBS: Record<TechnologyId, string> = {
   absorption: "Silent, but heats refrigerant around the clock. The highest energy use of the three.",
   peltier: "Solid-state cooling with no compressor. Simple, but inefficient at hotel room temperatures.",
   inverter: "Variable-speed compressor that runs only as hard as needed. The lowest energy use.",
-  custom: "The minibar currently installed in your rooms, as entered at the stand.",
 };
 
 /** Validation ceilings for administrator input. */

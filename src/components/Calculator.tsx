@@ -3,18 +3,8 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { calculate } from "@/lib/calc";
 import { findCountry } from "@/lib/countries";
-import { ATTRACT_IDLE_MS, DEFAULT_COUNTRY, HERO_ID, MIN_CHART_YEARS } from "@/lib/defaults";
-import {
-  DISCLAIMER,
-  customTechnology,
-  fromSearchParams,
-  initialInputs,
-  marketDefaults,
-  parseDecimal,
-  toSearchParams,
-  validateInputs,
-  type SalesInputs,
-} from "@/lib/inputs";
+import { ATTRACT_IDLE_MS, DEFAULT_COUNTRY, MIN_CHART_YEARS } from "@/lib/defaults";
+import { DISCLAIMER, fromSearchParams, initialInputs, marketDefaults, parseDecimal, toSearchParams, validateInputs, type SalesInputs } from "@/lib/inputs";
 import { useSettings } from "@/lib/settings";
 import { AdminPanel } from "./AdminPanel";
 import { AttractMode } from "./AttractMode";
@@ -67,8 +57,7 @@ export function Calculator() {
 
   const country = findCountry(inputs.countryCode) ?? findCountry(DEFAULT_COUNTRY)!;
   const errors = validateInputs(inputs);
-  const mainValid = !errors.rooms && !errors.tariff && !errors.fxRate;
-  const customValid = !errors.customKwh && !errors.customPrice;
+  const valid = Object.keys(errors).length === 0;
 
   const numeric = {
     rooms: Number(inputs.rooms),
@@ -77,13 +66,7 @@ export function Calculator() {
     years: inputs.years,
   };
 
-  const customTech = customValid ? customTechnology(inputs, numeric.fxRate) : null;
-  const heroIndex = settings.technologies.findIndex((t) => t.id === HERO_ID);
-  const effectiveSettings = customTech
-    ? { ...settings, technologies: [...settings.technologies.slice(0, heroIndex), customTech, ...settings.technologies.slice(heroIndex)] }
-    : settings;
-
-  const result = mainValid ? calculate(effectiveSettings, numeric, MIN_CHART_YEARS) : null;
+  const result = valid ? calculate(settings, numeric, MIN_CHART_YEARS) : null;
   const comparison = result
     ? (result.comparisons.find((c) => c.competitor.tech.id === inputs.mode) ?? result.comparisons[0] ?? null)
     : null;

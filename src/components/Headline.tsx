@@ -2,7 +2,7 @@
 
 import type { CalcResult, Comparison } from "@/lib/calc";
 import type { Country } from "@/lib/countries";
-import { COMPANY, CUSTOM_ID, type Technology, type TechnologyId } from "@/lib/defaults";
+import { COMPANY, type Technology, type TechnologyId } from "@/lib/defaults";
 import { formatMoney, formatNumber, formatRate } from "@/lib/format";
 import { LiveCounter } from "./LiveCounter";
 import { Segmented } from "./ui";
@@ -17,9 +17,8 @@ interface Props {
   onMode: (id: TechnologyId) => void;
 }
 
-/** "Thermoelectric (Peltier)" → "Peltier", "Inverter Compressor" → "Inverter"; the visitor's minibar keeps its name. */
-const shortName = (t: Technology) =>
-  t.id === CUSTOM_ID ? (t.name.length > 18 ? `${t.name.slice(0, 17)}…` : t.name) : (/\(([^)]+)\)/.exec(t.name)?.[1] ?? t.name.split(" ")[0]);
+/** "Thermoelectric (Peltier)" → "Peltier", "Inverter Compressor" → "Inverter". */
+const shortName = (t: Technology) => /\(([^)]+)\)/.exec(t.name)?.[1] ?? t.name.split(" ")[0];
 
 export function Headline({ result, comparison, country, rooms, tariff, mode, onMode }: Props) {
   const currency = country.currency;
