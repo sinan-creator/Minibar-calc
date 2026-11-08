@@ -1,9 +1,10 @@
 "use client";
 
 import type { CalcResult } from "@/lib/calc";
-import { HERO_ID, TECH_FACTS } from "@/lib/defaults";
-import { formatKwh, formatMoney, formatNumber, formatPayback } from "@/lib/format";
-import { EmptyState, Panel, TECH_COLORS, plural } from "./ui";
+import { HERO_ID } from "@/lib/defaults";
+import { techName } from "@/lib/i18n";
+import { useI18n } from "./I18nProvider";
+import { EmptyState, Panel, TECH_COLORS } from "./ui";
 
 interface Props {
   result: CalcResult | null;
@@ -14,10 +15,10 @@ interface Props {
 
 /** All active technologies side by side, one column each, with the hero column highlighted. */
 export function ComparisonTable({ result, currency, years, fxRate }: Props) {
-  const title = "Side-by-side comparison";
+  const { s, f, lang } = useI18n();
   if (!result) {
     return (
-      <Panel title={title}>
+      <Panel title={s.tableTitle}>
         <div className="mt-6">
           <EmptyState />
         </div>
@@ -27,61 +28,53 @@ export function ComparisonTable({ result, currency, years, fxRate }: Props) {
 
   const cmpFor = (id: string) => result.comparisons.find((c) => c.competitor.tech.id === id) ?? null;
   const showUsd = currency !== "USD";
-  const money = (v: number) => formatMoney(v, currency);
+  const money = (v: number) => f.money(v, currency);
+  const yearsLabel = f.years(years);
 
   const rows: { label: string; cells: (string | { main: string; sub?: string })[] }[] = [
-    { label: "Cooling principle", cells: result.results.map((r) => TECH_FACTS[r.tech.id].principle) },
-    { label: "Noise level", cells: result.results.map((r) => TECH_FACTS[r.tech.id].noise) },
-    { label: "Ideal for", cells: result.results.map((r) => TECH_FACTS[r.tech.id].idealFor) },
+    { label: s.coolingPrinciple, cells: result.results.map((r) => s.facts[r.tech.id].principle) },
+    { label: s.noiseLevel, cells: result.results.map((r) => s.facts[r.tech.id].noise) },
+    { label: s.idealFor, cells: result.results.map((r) => s.facts[r.tech.id].idealFor) },
+    { label: s.dailyPerUnit, cells: result.results.map((r) => `${f.number(r.tech.dailyKwh, 3)} kWh`) },
     {
-      label: "Daily consumption per unit",
-      cells: result.results.map((r) => `${formatNumber(r.tech.dailyKwh, 3)} kWh`),
+      label: s.pricePerUnit,
+      cells: result.results.map((r) => ({ main: money(r.tech.unitPriceUsd * fxRate), sub: showUsd ? f.money(r.tech.unitPriceUsd, "USD") : undefined })),
     },
     {
-      label: "Purchase price per unit",
-      cells: result.results.map((r) => ({
-        main: money(r.tech.unitPriceUsd * fxRate),
-        sub: showUsd ? formatMoney(r.tech.unitPriceUsd, "USD") : undefined,
-      })),
+      label: s.initialInvestment,
+      cells: result.results.map((r) => ({ main: money(r.investment), sub: showUsd ? f.money(r.investmentUsd, "USD") : undefined })),
+    },
+    { label: s.annualEnergy, cells: result.results.map((r) => f.kwh(r.annualKwh)) },
+    { label: s.annualElectricityCost, cells: result.results.map((r) => money(r.annualCost)) },
+    { label: s.totalCostOver(yearsLabel), cells: result.results.map((r) => money(r.totalCost)) },
+    {
+      label: s.annualSavingsWith(techName(result.hero.tech, lang)),
+      cells: result.results.map((r) => (r === result.hero ? s.reference : money(cmpFor(r.tech.id)?.annualSavings ?? 0))),
     },
     {
-      label: "Initial investment",
-      cells: result.results.map((r) => ({ main: money(r.investment), sub: showUsd ? formatMoney(r.investmentUsd, "USD") : undefined })),
-    },
-    { label: "Annual energy", cells: result.results.map((r) => formatKwh(r.annualKwh)) },
-    { label: "Annual electricity cost", cells: result.results.map((r) => money(r.annualCost)) },
-    { label: `Total cost over ${plural(years, "year")}`, cells: result.results.map((r) => money(r.totalCost)) },
-    {
-      label: `Annual savings with ${result.hero.tech.name}`,
-      cells: result.results.map((r) => (r === result.hero ? "reference" : money(cmpFor(r.tech.id)?.annualSavings ?? 0))),
-    },
-    {
-      label: `Savings over ${plural(years, "year")}`,
+      label: s.savingsOver(yearsLabel),
       cells: result.results.map((r) => (r === result.hero ? "—" : money(cmpFor(r.tech.id)?.cumulativeSavings ?? 0))),
     },
     {
-      label: "Payback period",
-      cells: result.results.map((r) => (r === result.hero ? "—" : formatPayback(cmpFor(r.tech.id)?.paybackMonths ?? null))),
+      label: s.paybackPeriod,
+      cells: result.results.map((r) => (r === result.hero ? "—" : f.payback(cmpFor(r.tech.id)?.paybackMonths ?? null))),
     },
   ];
 
   return (
-    <Panel title={title} subtitle="Every figure the cards show, in one table.">
+    <Panel title={s.tableTitle} subtitle={s.tableSubtitle}>
       <div className="-mx-6 mt-6 overflow-x-auto px-6 sm:-mx-7 sm:px-7">
         <table className="w-full min-w-[640px] border-collapse text-sm">
           <thead>
             <tr className="border-b border-line">
-              <th className="py-3 pr-4 text-left font-medium text-slate-ui">Metric</th>
+              <th className="py-3 pr-4 text-left font-medium text-slate-ui">{s.metric}</th>
               {result.results.map((r) => {
                 const isHero = r.tech.id === HERO_ID;
                 return (
-                  <th
-                    key={r.tech.id}
-                    className={`px-4 py-3 text-right font-semibold ${isHero ? "rounded-t-2xl bg-accent-soft text-navy" : "text-ink"}`}
-                  >
+                  <th key={r.tech.id} className={`px-4 py-3 text-right font-semibold ${isHero ? "rounded-t-2xl bg-accent-soft text-navy" : "text-ink"}`}>
                     <span className="inline-flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full" style={{ background: TECH_COLORS[r.tech.id] }} />
-                      {r.tech.name}
+                      {techName(r.tech, lang)}
                     </span>
                   </th>
                 );

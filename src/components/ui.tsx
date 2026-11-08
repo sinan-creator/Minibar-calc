@@ -3,6 +3,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import type { TechnologyId } from "@/lib/defaults";
 import type { ValueKind } from "@/lib/tariffs";
+import { useI18n } from "./I18nProvider";
 
 /** Chart and marker colours per technology. Cool greys for competitors, accent blue for the hero. */
 export const TECH_COLORS: Record<TechnologyId, string> = {
@@ -11,7 +12,8 @@ export const TECH_COLORS: Record<TechnologyId, string> = {
   inverter: "#2b6cf6",
 };
 
-export const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
+/** "Thermoelectric (Peltier)" → "Peltier", "Inverter Compressor" → "Inverter". */
+export const shortName = (name: string) => /\(([^)]+)\)/.exec(name)?.[1] ?? name.split(" ")[0];
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "secondary" | "ghost" | "danger" };
 
@@ -43,9 +45,10 @@ export function Segmented<T extends string | number>({
   onChange: (value: T) => void;
   options: { value: T; label: string }[];
   ariaLabel: string;
-  size?: "md" | "lg";
+  size?: "sm" | "md" | "lg";
   className?: string;
 }) {
+  const sizes = { sm: "h-9 px-3 text-xs", md: "h-10 px-4 text-sm", lg: "h-12 px-5 text-base" }[size];
   return (
     <div role="radiogroup" aria-label={ariaLabel} className={`inline-flex max-w-full flex-wrap rounded-full bg-mist p-1 ${className}`}>
       {options.map((o) => {
@@ -57,9 +60,9 @@ export function Segmented<T extends string | number>({
             role="radio"
             aria-checked={active}
             onClick={() => onChange(o.value)}
-            className={`flex-1 whitespace-nowrap rounded-full font-medium transition-all ${
-              size === "lg" ? "h-12 px-5 text-base" : "h-10 px-4 text-sm"
-            } ${active ? "bg-white text-navy shadow-[0_1px_3px_rgba(16,24,40,0.12)]" : "text-slate-ui hover:text-navy"}`}
+            className={`flex-1 whitespace-nowrap rounded-full font-medium transition-all ${sizes} ${
+              active ? "bg-white text-navy shadow-[0_1px_3px_rgba(16,24,40,0.12)]" : "text-slate-ui hover:text-navy"
+            }`}
           >
             {o.label}
           </button>
@@ -94,16 +97,17 @@ export function SourceTag({
   meta: { year: number; source: string; pegged?: boolean } | null | undefined;
   onUseEstimate?: () => void;
 }) {
+  const { s } = useI18n();
   if (kind === "manual" || !meta) {
     return (
       <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-ui">
-        <span className="rounded-full bg-mist px-2 py-0.5 font-medium text-navy">Manual entry</span>
+        <span className="rounded-full bg-mist px-2 py-0.5 font-medium text-navy">{s.manualEntry}</span>
         {meta && onUseEstimate ? (
           <button type="button" className="underline underline-offset-2 hover:text-navy" onClick={onUseEstimate}>
-            Use {meta.year} estimate
+            {s.useEstimate(meta.year)}
           </button>
         ) : (
-          <span>No reference value for this market. Confirm with the customer.</span>
+          <span>{s.noReference}</span>
         )}
       </p>
     );
@@ -111,10 +115,12 @@ export function SourceTag({
   return (
     <div className="mt-2 text-xs text-slate-ui">
       <span className="rounded-full bg-accent-soft px-2 py-0.5 font-medium text-accent">
-        Estimated · {meta.year}
-        {meta.pegged ? " · USD peg" : ""}
+        {s.estimated(meta.year)}
+        {meta.pegged ? ` · ${s.usdPeg}` : ""}
       </span>
-      <p className="mt-1.5 leading-relaxed">{meta.source}. Not a live or verified rate.</p>
+      <p className="mt-1.5 leading-relaxed">
+        {meta.source}. {s.notLive}
+      </p>
     </div>
   );
 }
@@ -129,6 +135,7 @@ export function Panel({ title, subtitle, children, className = "" }: { title: st
   );
 }
 
-export function EmptyState({ message = "Enter valid hotel details on the left to see results." }: { message?: string }) {
-  return <div className="flex h-48 items-center justify-center rounded-2xl bg-mist text-sm text-slate-ui">{message}</div>;
+export function EmptyState() {
+  const { s } = useI18n();
+  return <div className="flex h-48 items-center justify-center rounded-2xl bg-mist text-center text-sm text-slate-ui">{s.emptyState}</div>;
 }

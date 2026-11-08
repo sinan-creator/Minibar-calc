@@ -4,7 +4,8 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { calculate } from "@/lib/calc";
 import { findCountry } from "@/lib/countries";
 import { ATTRACT_IDLE_MS, DEFAULT_COUNTRY, HERO_ID, MIN_CHART_YEARS } from "@/lib/defaults";
-import { DISCLAIMER, fromSearchParams, initialInputs, marketDefaults, parseDecimal, toSearchParams, validateInputs, type SalesInputs } from "@/lib/inputs";
+import { isLang, setLang, strings, useStoredLang, type Lang } from "@/lib/i18n";
+import { fromSearchParams, initialInputs, marketDefaults, parseDecimal, toSearchParams, validateInputs, type SalesInputs } from "@/lib/inputs";
 import { useSettings } from "@/lib/settings";
 import { AdminPanel } from "./AdminPanel";
 import { AttractMode } from "./AttractMode";
@@ -13,6 +14,7 @@ import { ComparisonTable } from "./ComparisonTable";
 import { EnergySaved } from "./EnergySaved";
 import { Header } from "./Header";
 import { Headline } from "./Headline";
+import { I18nProvider } from "./I18nProvider";
 import { InputsPanel } from "./InputsPanel";
 import { PrintSummary } from "./PrintSummary";
 import { Recommendation } from "./Recommendation";
@@ -31,10 +33,21 @@ export function Calculator() {
   const inputs = edited ?? fromSearchParams(search);
   const setInputs = (fn: (s: SalesInputs) => SalesInputs) => setEdited((s) => fn(s ?? fromSearchParams(search)));
 
+  // Language: the device's stored choice, else the URL, else English.
+  const storedLang = useStoredLang();
+  const urlLang = new URLSearchParams(search).get("lang");
+  const lang: Lang = storedLang ?? (isLang(urlLang) ? urlLang : "en");
+
   useEffect(() => {
-    if (!edited) return;
-    window.history.replaceState(null, "", `${window.location.pathname}?${toSearchParams(edited).toString()}`);
-  }, [edited]);
+    document.documentElement.lang = lang;
+  }, [lang]);
+
+  useEffect(() => {
+    if (!edited && !storedLang) return;
+    const params = toSearchParams(inputs);
+    if (lang !== "en") params.set("lang", lang);
+    window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
+  }, [edited, storedLang, inputs, lang]);
 
   // Exhibition attract mode after a period of no interaction (or on demand with ?attract=1 to preview it).
   const [idle, setIdle] = useState(false);
@@ -80,9 +93,9 @@ export function Calculator() {
   };
 
   return (
-    <>
+    <I18nProvider lang={lang}>
       <div className="flex min-h-screen flex-col print:hidden">
-        <Header onReset={reset} onPrint={() => window.print()} onShare={() => setShareOpen(true)} />
+        <Header onReset={reset} onPrint={() => window.print()} onShare={() => setShareOpen(true)} onLang={setLang} />
 
         <main className="mx-auto w-full max-w-7xl flex-1 px-5 pb-20 sm:px-8">
           <Headline comparison={comparison} country={country} rooms={numeric.rooms} />
@@ -114,7 +127,7 @@ export function Calculator() {
 
         <footer className="border-t border-line">
           <div className="mx-auto flex w-full max-w-7xl items-start justify-between gap-6 px-5 py-6 sm:px-8">
-            <p className="max-w-4xl text-xs leading-relaxed text-slate-ui">{DISCLAIMER}</p>
+            <p className="max-w-4xl text-xs leading-relaxed text-slate-ui">{strings(lang).disclaimer}</p>
             <AdminPanel />
           </div>
         </footer>
@@ -141,6 +154,6 @@ export function Calculator() {
         tariff={numeric.tariff}
         fxRate={numeric.fxRate}
       />
-    </>
+    </I18nProvider>
   );
 }

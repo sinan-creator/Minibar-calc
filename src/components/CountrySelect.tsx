@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
-import { findCountry, searchCountries } from "@/lib/countries";
+import { countryName, findCountry, searchCountries } from "@/lib/countries";
+import { useI18n } from "./I18nProvider";
 
 /** Searchable, keyboard- and touch-friendly country combobox. */
 export function CountrySelect({ id, value, onChange }: { id?: string; value: string; onChange: (code: string) => void }) {
+  const { s, locale } = useI18n();
   const selected = findCountry(value);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -12,7 +14,7 @@ export function CountrySelect({ id, value, onChange }: { id?: string; value: str
   const listId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
-  const results = searchCountries(query).slice(0, 80);
+  const results = searchCountries(query, locale).slice(0, 80);
 
   useEffect(() => {
     if (!open) return;
@@ -63,8 +65,8 @@ export function CountrySelect({ id, value, onChange }: { id?: string; value: str
         autoCorrect="off"
         spellCheck={false}
         className="input pr-11"
-        placeholder="Search country"
-        value={open ? query : (selected?.name ?? "")}
+        placeholder={s.searchCountry}
+        value={open ? query : selected ? countryName(selected, locale) : ""}
         onFocus={() => {
           setOpen(true);
           setQuery("");
@@ -90,7 +92,7 @@ export function CountrySelect({ id, value, onChange }: { id?: string; value: str
           role="listbox"
           className="absolute z-30 mt-2 max-h-72 w-full overflow-auto rounded-2xl border border-line bg-white p-1 shadow-[0_20px_50px_-20px_rgba(11,31,58,0.35)]"
         >
-          {results.length === 0 && <li className="px-4 py-3 text-sm text-slate-ui">No matching country</li>}
+          {results.length === 0 && <li className="px-4 py-3 text-sm text-slate-ui">{s.noMatchingCountry}</li>}
           {results.map((c, i) => (
             <li
               key={c.code}
@@ -105,7 +107,7 @@ export function CountrySelect({ id, value, onChange }: { id?: string; value: str
                 i === active ? "bg-mist text-navy" : "text-ink"
               }`}
             >
-              <span>{c.name}</span>
+              <span>{countryName(c, locale)}</span>
               <span className="text-xs text-slate-ui">{c.currency}</span>
             </li>
           ))}

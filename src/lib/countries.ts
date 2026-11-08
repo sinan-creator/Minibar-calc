@@ -101,15 +101,39 @@ const BY_CODE = new Map(COUNTRIES.map((c) => [c.code, c]));
 
 export const findCountry = (code: string) => BY_CODE.get(code.toUpperCase());
 
-/** Case- and accent-insensitive search on name, code and currency. */
-export function searchCountries(query: string): Country[] {
+const displayNames = new Map<string, Intl.DisplayNames | null>();
+
+/** Country name in the UI language (bundled English for "en", Intl for others, English fallback). */
+export function countryName(country: Country, locale: string): string {
+  if (locale.startsWith("en")) return country.name;
+  if (!displayNames.has(locale)) {
+    try {
+      displayNames.set(locale, new Intl.DisplayNames([locale], { type: "region" }));
+    } catch {
+      displayNames.set(locale, null);
+    }
+  }
+  try {
+    return displayNames.get(locale)?.of(country.code) ?? country.name;
+  } catch {
+    return country.name;
+  }
+}
+
+/** Case- and accent-insensitive search on the localized and English names, code and currency. */
+export function searchCountries(query: string, locale = "en"): Country[] {
   const q = fold(query.trim());
-  if (!q) return [...COUNTRIES];
-  return COUNTRIES.filter((c) => fold(c.name).includes(q) || c.code.toLowerCase() === q || c.currency.toLowerCase() === q);
+  const list = [...COUNTRIES].sort((a, b) => countryName(a, locale).localeCompare(countryName(b, locale), locale));
+  if (!q) return list;
+  return list.filter(
+    (c) =>
+      fold(countryName(c, locale)).includes(q) || fold(c.name).includes(q) || c.code.toLowerCase() === q || c.currency.toLowerCase() === q,
+  );
 }
 
 const fold = (s: string) =>
   s
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
+    .replace(/ı/g, "i")
     .toLowerCase();

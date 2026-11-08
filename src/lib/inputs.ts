@@ -15,14 +15,12 @@ export interface SalesInputs {
   mode: TechnologyId;
 }
 
+/** Error codes; the UI maps them to the active language. */
 export interface InputErrors {
-  rooms?: string;
-  tariff?: string;
-  fxRate?: string;
+  rooms?: "range";
+  tariff?: "required" | "positive";
+  fxRate?: "required" | "positive";
 }
-
-export const DISCLAIMER =
-  "Results are estimates for comparison purposes only. Actual energy consumption varies with ambient temperature, door openings, load, thermostat settings and operating conditions. Tariffs and exchange rates marked as estimates are desk references for the stated year, not live or verified rates. Confirm current values with the customer before quoting.";
 
 /** Accepts "4,90" as well as "4.90". */
 export const parseDecimal = (s: string) => Number(s.trim().replace(",", "."));
@@ -53,16 +51,15 @@ export function initialInputs(countryCode = DEFAULT_COUNTRY): SalesInputs {
 export function validateInputs(i: SalesInputs): InputErrors {
   const errors: InputErrors = {};
   const rooms = Number(i.rooms.trim());
-  if (!i.rooms.trim() || !Number.isInteger(rooms) || rooms < ROOM_LIMITS.min || rooms > ROOM_LIMITS.max)
-    errors.rooms = `Enter a whole number between ${ROOM_LIMITS.min} and ${ROOM_LIMITS.max.toLocaleString("en")}.`;
+  if (!i.rooms.trim() || !Number.isInteger(rooms) || rooms < ROOM_LIMITS.min || rooms > ROOM_LIMITS.max) errors.rooms = "range";
 
   const tariff = parseDecimal(i.tariff);
-  if (!i.tariff.trim()) errors.tariff = "Enter the commercial electricity tariff per kWh.";
-  else if (!Number.isFinite(tariff) || tariff <= 0 || tariff > 1_000_000) errors.tariff = "Enter a positive tariff.";
+  if (!i.tariff.trim()) errors.tariff = "required";
+  else if (!Number.isFinite(tariff) || tariff <= 0 || tariff > 1_000_000) errors.tariff = "positive";
 
   const fx = parseDecimal(i.fxRate);
-  if (!i.fxRate.trim()) errors.fxRate = "Enter how many units of local currency 1 USD buys.";
-  else if (!Number.isFinite(fx) || fx <= 0 || fx > 1_000_000_000) errors.fxRate = "Enter a positive exchange rate.";
+  if (!i.fxRate.trim()) errors.fxRate = "required";
+  else if (!Number.isFinite(fx) || fx <= 0 || fx > 1_000_000_000) errors.fxRate = "positive";
   return errors;
 }
 

@@ -2,10 +2,12 @@
 
 import type { Country } from "@/lib/countries";
 import { PERIOD_OPTIONS, ROOM_LIMITS, type PeriodYears, type Technology, type TechnologyId } from "@/lib/defaults";
+import { techName } from "@/lib/i18n";
 import type { InputErrors, SalesInputs } from "@/lib/inputs";
 import { fxFor, tariffFor } from "@/lib/tariffs";
 import { CountrySelect } from "./CountrySelect";
-import { Field, Segmented, SourceTag, plural } from "./ui";
+import { useI18n } from "./I18nProvider";
+import { Field, Segmented, SourceTag, shortName } from "./ui";
 
 interface Props {
   inputs: SalesInputs;
@@ -17,39 +19,43 @@ interface Props {
   onSelectCountry: (code: string) => void;
 }
 
-/** "Thermoelectric (Peltier)" → "Peltier". */
-const shortName = (t: Technology) => /\(([^)]+)\)/.exec(t.name)?.[1] ?? t.name.split(" ")[0];
-
-function currencyName(code: string) {
+function currencyName(code: string, locale: string) {
   try {
-    return new Intl.DisplayNames(["en"], { type: "currency" }).of(code) ?? code;
+    return new Intl.DisplayNames([locale], { type: "currency" }).of(code) ?? code;
   } catch {
     return code;
   }
 }
 
 export function InputsPanel({ inputs, country, errors, competitors, onChange, onSelectCountry }: Props) {
-  const activeMode = competitors.some((t) => t.id === inputs.mode) ? inputs.mode : competitors[0]?.id;
+  const { s, f, lang, locale } = useI18n();
   const tariffMeta = tariffFor(country.code) ?? null;
   const fxMeta = fxFor(country.currency) ?? null;
   const isUsd = country.currency === "USD";
   const rooms = Number(inputs.rooms) || 0;
   const stepRooms = (delta: number) =>
     onChange({ rooms: String(Math.min(ROOM_LIMITS.max, Math.max(ROOM_LIMITS.min, rooms + delta))) });
+  const activeMode = competitors.some((t) => t.id === inputs.mode) ? inputs.mode : competitors[0]?.id;
+
+  const errorText = {
+    rooms: errors.rooms ? s.errRooms(ROOM_LIMITS.min, f.number(ROOM_LIMITS.max)) : undefined,
+    tariff: errors.tariff === "required" ? s.errTariffRequired : errors.tariff === "positive" ? s.errTariffPositive : undefined,
+    fxRate: errors.fxRate === "required" ? s.errFxRequired : errors.fxRate === "positive" ? s.errFxPositive : undefined,
+  };
 
   return (
     <div className="rounded-3xl border border-line bg-white p-6 sm:p-7">
-      <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-ui">Hotel &amp; market</h2>
+      <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-ui">{s.hotelAndMarket}</h2>
       <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-1">
-        <Field label="Country" htmlFor="country">
+        <Field label={s.country} htmlFor="country">
           <CountrySelect id="country" value={country.code} onChange={onSelectCountry} />
         </Field>
 
-        <Field label="Hotel rooms" htmlFor="rooms" error={errors.rooms}>
+        <Field label={s.hotelRooms} htmlFor="rooms" error={errorText.rooms}>
           <div className="flex items-stretch gap-2">
             <button
               type="button"
-              aria-label="Fewer rooms"
+              aria-label={s.fewerRooms}
               onClick={() => stepRooms(-10)}
               className="h-12 w-12 shrink-0 rounded-2xl border border-line text-xl text-navy transition hover:bg-mist active:scale-95"
             >
@@ -66,7 +72,7 @@ export function InputsPanel({ inputs, country, errors, competitors, onChange, on
             />
             <button
               type="button"
-              aria-label="More rooms"
+              aria-label={s.moreRooms}
               onClick={() => stepRooms(10)}
               className="h-12 w-12 shrink-0 rounded-2xl border border-line text-xl text-navy transition hover:bg-mist active:scale-95"
             >
@@ -75,7 +81,7 @@ export function InputsPanel({ inputs, country, errors, competitors, onChange, on
           </div>
         </Field>
 
-        <Field label="Electricity tariff" htmlFor="tariff" error={errors.tariff}>
+        <Field label={s.electricityTariff} htmlFor="tariff" error={errorText.tariff}>
           <div className="relative">
             <input
               id="tariff"
@@ -97,17 +103,17 @@ export function InputsPanel({ inputs, country, errors, competitors, onChange, on
           />
         </Field>
 
-        <Field label="Currency">
+        <Field label={s.currency}>
           <div className="input flex items-center justify-between" aria-readonly>
             <span className="font-semibold text-navy">{country.currency}</span>
             <span className="truncate text-sm text-slate-ui" suppressHydrationWarning>
-              {currencyName(country.currency)}
+              {currencyName(country.currency, locale)}
             </span>
           </div>
-          <p className="mt-2 text-xs text-slate-ui">Selected automatically from the country.</p>
+          <p className="mt-2 text-xs text-slate-ui">{s.currencyAuto}</p>
         </Field>
 
-        <Field label="Exchange rate" htmlFor="fx" error={errors.fxRate}>
+        <Field label={s.exchangeRate} htmlFor="fx" error={errorText.fxRate}>
           <div className="relative">
             <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-ui">1 USD =</span>
             <input
@@ -123,7 +129,7 @@ export function InputsPanel({ inputs, country, errors, competitors, onChange, on
             <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-ui">{country.currency}</span>
           </div>
           {isUsd ? (
-            <p className="mt-2 text-xs text-slate-ui">Prices are already in USD.</p>
+            <p className="mt-2 text-xs text-slate-ui">{s.alreadyUsd}</p>
           ) : (
             <SourceTag
               kind={inputs.fxKind}
@@ -133,23 +139,23 @@ export function InputsPanel({ inputs, country, errors, competitors, onChange, on
           )}
         </Field>
 
-        <Field label="Comparison period">
+        <Field label={s.comparisonPeriod}>
           <Segmented<PeriodYears>
-            ariaLabel="Comparison period"
+            ariaLabel={s.comparisonPeriod}
             value={inputs.years}
             onChange={(years) => onChange({ years })}
-            options={PERIOD_OPTIONS.map((y) => ({ value: y, label: plural(y, "year") }))}
+            options={PERIOD_OPTIONS.map((y) => ({ value: y, label: f.years(y) }))}
             className="w-full"
           />
         </Field>
 
         {competitors.length > 1 && activeMode && (
-          <Field label="Compare Inverter against">
+          <Field label={s.compareAgainst}>
             <Segmented<TechnologyId>
-              ariaLabel="Comparison mode"
+              ariaLabel={s.compareAgainst}
               value={activeMode}
               onChange={(mode) => onChange({ mode })}
-              options={competitors.map((t) => ({ value: t.id, label: shortName(t) }))}
+              options={competitors.map((t) => ({ value: t.id, label: shortName(techName(t, lang)) }))}
               className="w-full"
             />
           </Field>

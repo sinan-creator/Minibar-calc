@@ -1,9 +1,9 @@
 "use client";
 
 import type { Comparison } from "@/lib/calc";
-import type { Country } from "@/lib/countries";
-import { COMPANY } from "@/lib/defaults";
-import { formatMoney, formatNumber } from "@/lib/format";
+import { countryName, type Country } from "@/lib/countries";
+import { techName } from "@/lib/i18n";
+import { useI18n } from "./I18nProvider";
 
 interface Props {
   comparison: Comparison | null;
@@ -12,32 +12,29 @@ interface Props {
 }
 
 export function Headline({ comparison, country, rooms }: Props) {
+  const { s, f, lang, locale } = useI18n();
   const currency = country.currency;
   const savingsUsd = comparison ? Math.max(0, comparison.annualSavingsUsd) : null;
 
   return (
     <section className="pt-10 sm:pt-14">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-ui">
-        Estimated annual savings · {country.name}
-      </p>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-ui">{s.estimatedAnnual(countryName(country, locale))}</p>
       <h1 className="mt-4 max-w-5xl text-4xl font-semibold leading-[1.06] tracking-tight text-navy sm:text-5xl lg:text-6xl">
-        Your hotel could save{" "}
-        <span className="num text-accent">{savingsUsd === null ? "—" : formatMoney(savingsUsd, "USD")}</span> in electricity
-        costs every year with {COMPANY} Inverter Minibars.
+        {s.headlineBefore} <span className="num text-accent">{savingsUsd === null ? "—" : f.money(savingsUsd, "USD")}</span>{" "}
+        {s.headlineAfter}
       </h1>
       <p className="mt-5 text-base text-slate-ui sm:text-lg">
         {comparison ? (
           <>
             {currency !== "USD" && (
               <>
-                ≈ <span className="num font-medium text-ink">{formatMoney(Math.max(0, comparison.annualSavings), currency)}</span> per
-                year ·{" "}
+                ≈ <span className="num font-medium text-ink">{f.money(Math.max(0, comparison.annualSavings), currency)}</span> / {s.perYear} ·{" "}
               </>
             )}
-            compared with {comparison.competitor.tech.name} minibars · {formatNumber(rooms)} rooms
+            {s.comparedWith(techName(comparison.competitor.tech, lang))} · {s.roomsCount(f.number(rooms))}
           </>
         ) : (
-          "Complete the hotel details to see the savings for this market."
+          s.completeDetails
         )}
       </p>
     </section>

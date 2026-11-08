@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import type { CalcResult, Comparison, TechResult } from "@/lib/calc";
-import { BASE_PATH, HERO_ID, TECH_BLURBS, TECH_FACTS, TECH_IMAGES } from "@/lib/defaults";
-import { formatKwh, formatMoney, formatNumber, formatPayback } from "@/lib/format";
-import { EmptyState, TECH_COLORS, plural } from "./ui";
+import { BASE_PATH, HERO_ID, TECH_IMAGES } from "@/lib/defaults";
+import { techName } from "@/lib/i18n";
+import { useI18n } from "./I18nProvider";
+import { EmptyState, TECH_COLORS } from "./ui";
 
 interface Props {
   result: CalcResult | null;
@@ -28,7 +29,7 @@ export function TechCards({ result, comparison, currency, years, fxRate }: Props
             isHero={isHero}
             cmp={isHero ? comparison : cmp}
             selected={!isHero && cmp !== null && cmp === comparison}
-            heroName={result.hero.tech.name}
+            hero={result.hero}
             currency={currency}
             years={years}
             fxRate={fxRate}
@@ -44,7 +45,7 @@ function TechCard({
   isHero,
   cmp,
   selected,
-  heroName,
+  hero,
   currency,
   years,
   fxRate,
@@ -54,15 +55,18 @@ function TechCard({
   /** For competitors: their comparison. For the hero: the currently selected comparison. */
   cmp: Comparison | null;
   selected: boolean;
-  heroName: string;
+  hero: TechResult;
   currency: string;
   years: number;
   fxRate: number;
 }) {
+  const { s, f, lang } = useI18n();
   const showUsd = currency !== "USD";
   const energyCut = cmp && cmp.competitor.annualKwh > 0 ? cmp.annualEnergySavedKwh / cmp.competitor.annualKwh : null;
-  const facts = TECH_FACTS[r.tech.id];
+  const facts = s.facts[r.tech.id];
   const image = TECH_IMAGES[r.tech.id];
+  const name = techName(r.tech, lang);
+  const yearsLabel = f.years(years);
 
   return (
     <article
@@ -76,14 +80,14 @@ function TechCard({
         <figure className="mb-5 overflow-hidden rounded-2xl bg-mist">
           <Image
             src={`${BASE_PATH}${image}`}
-            alt={`${r.tech.name} minibar, rear view`}
+            alt={`${name} · ${s.rearView}`}
             width={1200}
             height={900}
             sizes="(min-width: 768px) 33vw, 100vw"
             className="aspect-[4/3] h-auto w-full object-cover"
           />
           <figcaption className={`px-4 py-2 text-[11px] uppercase tracking-[0.14em] ${isHero ? "bg-white/10 text-white/70" : "text-slate-ui"}`}>
-            Rear view
+            {s.rearView}
           </figcaption>
         </figure>
       )}
@@ -91,53 +95,45 @@ function TechCard({
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
           <div className="flex items-center gap-2.5">
             <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: TECH_COLORS[r.tech.id] }} />
-            <h3 className="text-lg font-semibold tracking-tight">{r.tech.name}</h3>
+            <h3 className="text-lg font-semibold tracking-tight">{name}</h3>
           </div>
           {isHero ? (
-            <span className="rounded-full bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
-              Most efficient
-            </span>
+            <span className="rounded-full bg-accent px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">{s.mostEfficient}</span>
           ) : (
             selected && (
-              <span className="rounded-full bg-accent-soft px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-accent">
-                Comparing
-              </span>
+              <span className="rounded-full bg-accent-soft px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-accent">{s.comparing}</span>
             )
           )}
         </div>
-        <p className={`mt-2 text-sm leading-relaxed ${isHero ? "text-white/70" : "text-slate-ui"}`}>{TECH_BLURBS[r.tech.id]}</p>
+        <p className={`mt-2 text-sm leading-relaxed ${isHero ? "text-white/70" : "text-slate-ui"}`}>{s.blurbs[r.tech.id]}</p>
       </header>
 
       <dl className="mt-6 space-y-4">
-        <Row label="Cooling" value={facts.principle} small />
-        <Row label="Noise level" value={facts.noise} small />
-        <Row
-          label="Purchase price per unit"
-          value={formatMoney(r.tech.unitPriceUsd * fxRate, currency)}
-          sub={showUsd ? formatMoney(r.tech.unitPriceUsd, "USD") : undefined}
-        />
-        <Row label="Initial investment" value={formatMoney(r.investment, currency)} sub={showUsd ? formatMoney(r.investmentUsd, "USD") : undefined} />
-        <Row label="Annual energy" value={formatKwh(r.annualKwh)} sub={`${formatNumber(r.tech.dailyKwh, 3)} kWh/day per unit`} />
-        <Row label="Annual electricity cost" value={formatMoney(r.annualCost, currency)} />
+        <Row label={s.cooling} value={facts.principle} small />
+        <Row label={s.noiseLevel} value={facts.noise} small />
+        <Row label={s.pricePerUnit} value={f.money(r.tech.unitPriceUsd * fxRate, currency)} sub={showUsd ? f.money(r.tech.unitPriceUsd, "USD") : undefined} />
+        <Row label={s.initialInvestment} value={f.money(r.investment, currency)} sub={showUsd ? f.money(r.investmentUsd, "USD") : undefined} />
+        <Row label={s.annualEnergy} value={f.kwh(r.annualKwh)} sub={s.perUnitPerDay(f.number(r.tech.dailyKwh, 3))} />
+        <Row label={s.annualElectricityCost} value={f.money(r.annualCost, currency)} />
       </dl>
 
       <div className={`mt-6 border-t pt-5 ${isHero ? "border-white/15" : "border-line"}`}>
         <div className={`text-[11px] font-semibold uppercase tracking-[0.16em] ${isHero ? "text-white/60" : "text-slate-ui"}`}>
-          Total cost over {plural(years, "year")}
+          {s.totalCostOver(yearsLabel)}
         </div>
-        <div className="num mt-1 text-3xl font-semibold tracking-tight">{formatMoney(r.totalCost, currency)}</div>
+        <div className="num mt-1 text-3xl font-semibold tracking-tight">{f.money(r.totalCost, currency)}</div>
       </div>
 
       {cmp && (
         <footer className={`mt-6 rounded-2xl p-4 ${isHero ? "bg-white/10" : "bg-accent-soft text-navy"}`}>
           <div className={`text-[11px] font-semibold uppercase tracking-[0.16em] ${isHero ? "text-white/60" : "text-accent"}`}>
-            {isHero ? `Compared with ${cmp.competitor.tech.name}` : `Switch to ${heroName}`}
+            {isHero ? s.comparedWithTech(techName(cmp.competitor.tech, lang)) : s.switchTo(techName(hero.tech, lang))}
           </div>
           <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3">
-            <Stat label="Saves per year" value={formatMoney(cmp.annualSavings, currency)} />
-            <Stat label={`Saves over ${plural(years, "year")}`} value={formatMoney(cmp.cumulativeSavings, currency)} />
-            <Stat label="Payback" value={formatPayback(cmp.paybackMonths)} />
-            <Stat label="Energy cut" value={energyCut === null ? "—" : `${formatNumber(energyCut * 100)}%`} />
+            <Stat label={s.savesPerYear} value={f.money(cmp.annualSavings, currency)} />
+            <Stat label={s.savesOver(yearsLabel)} value={f.money(cmp.cumulativeSavings, currency)} />
+            <Stat label={s.payback} value={f.payback(cmp.paybackMonths)} />
+            <Stat label={s.energyCut} value={energyCut === null ? "—" : `${f.number(energyCut * 100)}%`} />
           </div>
         </footer>
       )}

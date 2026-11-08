@@ -1,14 +1,12 @@
-const LOCALE = "en";
-
 type Formatter = { format: (n: number) => string };
 const moneyCache = new Map<string, Formatter>();
 
-function moneyFormatter(currency: string, maximumFractionDigits: number, compact: boolean): Formatter {
-  const key = `${currency}|${maximumFractionDigits}|${compact}`;
+function moneyFormatter(locale: string, currency: string, maximumFractionDigits: number, compact: boolean): Formatter {
+  const key = `${locale}|${currency}|${maximumFractionDigits}|${compact}`;
   let fmt = moneyCache.get(key);
   if (!fmt) {
     try {
-      fmt = new Intl.NumberFormat(LOCALE, {
+      fmt = new Intl.NumberFormat(locale, {
         style: "currency",
         currency,
         currencyDisplay: "narrowSymbol",
@@ -18,7 +16,7 @@ function moneyFormatter(currency: string, maximumFractionDigits: number, compact
       });
     } catch {
       // Malformed currency code: plain number with the code appended.
-      const plain = new Intl.NumberFormat(LOCALE, { minimumFractionDigits: 0, maximumFractionDigits });
+      const plain = new Intl.NumberFormat(locale, { minimumFractionDigits: 0, maximumFractionDigits });
       fmt = { format: (n) => `${plain.format(n)} ${currency}` };
     }
     moneyCache.set(key, fmt);
@@ -26,35 +24,22 @@ function moneyFormatter(currency: string, maximumFractionDigits: number, compact
   return fmt;
 }
 
-export function formatMoney(value: number, currency: string, opts: { digits?: number; compact?: boolean } = {}) {
+export function formatMoney(value: number, currency: string, opts: { digits?: number; compact?: boolean; locale?: string } = {}) {
   if (!Number.isFinite(value)) return "—";
-  return moneyFormatter(currency, opts.digits ?? 0, opts.compact ?? false).format(value);
+  return moneyFormatter(opts.locale ?? "en", currency, opts.digits ?? 0, opts.compact ?? false).format(value);
 }
 
 /** Up to 4 decimals, used for tariffs and exchange rates. */
-export function formatRate(value: number, currency: string) {
+export function formatRate(value: number, currency: string, locale = "en") {
   if (!Number.isFinite(value)) return "—";
-  return moneyFormatter(currency, 4, false).format(value);
+  return moneyFormatter(locale, currency, 4, false).format(value);
 }
 
-export function formatNumber(value: number, maximumFractionDigits = 0) {
+export function formatNumber(value: number, maximumFractionDigits = 0, locale = "en") {
   if (!Number.isFinite(value)) return "—";
-  return new Intl.NumberFormat(LOCALE, { maximumFractionDigits }).format(value);
+  return new Intl.NumberFormat(locale, { maximumFractionDigits }).format(value);
 }
 
-export function formatKwh(value: number) {
-  return `${formatNumber(value)} kWh`;
-}
-
-export function formatPayback(months: number | null) {
-  if (months === null) return "No payback";
-  if (months <= 0) return "Immediate";
-  if (months < 1) return "< 1 month";
-  if (months >= 240) return "> 20 years";
-  return `${formatNumber(months, months < 10 ? 1 : 0)} months`;
-}
-
-export function formatYears(years: number | null) {
-  if (years === null) return "—";
-  return `${formatNumber(years, 1)} yr`;
+export function formatKwh(value: number, locale = "en") {
+  return `${formatNumber(value, 0, locale)} kWh`;
 }

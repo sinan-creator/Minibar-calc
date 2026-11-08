@@ -2,8 +2,9 @@
 
 import type { CalcResult, Comparison } from "@/lib/calc";
 import { HERO_ID } from "@/lib/defaults";
-import { formatMoney, formatNumber, formatPayback } from "@/lib/format";
-import { EmptyState, Panel, TECH_COLORS, plural } from "./ui";
+import { techName } from "@/lib/i18n";
+import { useI18n } from "./I18nProvider";
+import { EmptyState, Panel, TECH_COLORS } from "./ui";
 
 interface ChartProps {
   result: CalcResult | null;
@@ -14,7 +15,8 @@ interface ChartProps {
 
 /** Stacked bars: purchase (solid) + electricity over the period (translucent). */
 export function OwnershipBarChart({ result, currency, years }: ChartProps) {
-  const title = `Total cost of ownership over ${plural(years, "year")}`;
+  const { s, f, lang } = useI18n();
+  const title = s.tcoTitle(f.years(years));
   if (!result) {
     return (
       <Panel title={title}>
@@ -28,7 +30,7 @@ export function OwnershipBarChart({ result, currency, years }: ChartProps) {
   const heroTotal = result.hero.totalCost;
 
   return (
-    <Panel title={title} subtitle="Purchase price plus electricity. Lower is better.">
+    <Panel title={title} subtitle={s.tcoSubtitle}>
       <div className="mt-8 flex items-end gap-4 sm:gap-8">
         {result.results.map((r) => {
           const pct = (r.totalCost / max) * 100;
@@ -40,34 +42,30 @@ export function OwnershipBarChart({ result, currency, years }: ChartProps) {
             <div key={r.tech.id} className="flex flex-1 flex-col items-center">
               <div className="mb-3 h-12 text-center">
                 <div className={`num text-lg font-semibold sm:text-xl ${isHero ? "text-accent" : "text-navy"}`}>
-                  {r.totalCost >= 10_000_000
-                    ? formatMoney(r.totalCost, currency, { compact: true, digits: 2 })
-                    : formatMoney(r.totalCost, currency)}
+                  {r.totalCost >= 10_000_000 ? f.money(r.totalCost, currency, { compact: true, digits: 2 }) : f.money(r.totalCost, currency)}
                 </div>
-                {saving !== null && saving > 0 && (
-                  <div className="text-xs text-slate-ui">Inverter saves {formatNumber(saving * 100)}%</div>
-                )}
+                {saving !== null && saving > 0 && <div className="text-xs text-slate-ui">{s.inverterSaves(f.number(saving * 100))}</div>}
               </div>
               <div className="flex h-56 w-full max-w-[150px] items-end">
                 <div
                   className="flex w-full flex-col-reverse overflow-hidden rounded-2xl transition-[height] duration-500 ease-out"
                   style={{ height: `${Math.max(pct, 1.5)}%` }}
                 >
-                  <div style={{ height: `${investPct}%`, background: color }} title="Purchase" />
-                  <div style={{ height: `${100 - investPct}%`, background: color, opacity: 0.38 }} title="Electricity" />
+                  <div style={{ height: `${investPct}%`, background: color }} title={s.purchase} />
+                  <div style={{ height: `${100 - investPct}%`, background: color, opacity: 0.38 }} />
                 </div>
               </div>
-              <div className="mt-3 text-center text-sm font-medium text-ink">{r.tech.name}</div>
+              <div className="mt-3 text-center text-sm font-medium text-ink">{techName(r.tech, lang)}</div>
             </div>
           );
         })}
       </div>
       <div className="mt-6 flex flex-wrap gap-5 text-xs text-slate-ui">
         <span className="inline-flex items-center gap-2">
-          <span className="h-3 w-3 rounded-sm bg-navy" /> Purchase
+          <span className="h-3 w-3 rounded-sm bg-navy" /> {s.purchase}
         </span>
         <span className="inline-flex items-center gap-2">
-          <span className="h-3 w-3 rounded-sm bg-navy/35" /> Electricity over {plural(years, "year")}
+          <span className="h-3 w-3 rounded-sm bg-navy/35" /> {s.electricityOver(f.years(years))}
         </span>
       </div>
     </Panel>
@@ -78,14 +76,15 @@ export function OwnershipBarChart({ result, currency, years }: ChartProps) {
 function niceTicks(max: number, target = 5): number[] {
   const rough = max / target;
   const pow = 10 ** Math.floor(Math.log10(rough));
-  const step = [1, 2, 2.5, 5, 10].map((m) => m * pow).find((s) => s >= rough) ?? 10 * pow;
+  const step = [1, 2, 2.5, 5, 10].map((m) => m * pow).find((v) => v >= rough) ?? 10 * pow;
   const count = Math.ceil(max / step);
   return Array.from({ length: count + 1 }, (_, i) => i * step);
 }
 
 /** Cumulative cost lines with break-even markers where the hero overtakes each competitor. */
 export function CumulativeChart({ result, comparison, currency }: ChartProps) {
-  const title = "Cumulative cost over time";
+  const { s, f, lang } = useI18n();
+  const title = s.cumulativeTitle;
   if (!result) {
     return (
       <Panel title={title}>
@@ -120,19 +119,19 @@ export function CumulativeChart({ result, comparison, currency }: ChartProps) {
   }
 
   return (
-    <Panel title={title} subtitle="Where the lines cross, the Inverter has paid back its higher purchase price.">
-      <svg viewBox={`0 0 ${W} ${H}`} className="mt-6 h-auto w-full" role="img" aria-label="Cumulative ownership cost by year for each technology">
+    <Panel title={title} subtitle={s.cumulativeSubtitle}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="mt-6 h-auto w-full" role="img" aria-label={s.cumulativeAria}>
         {ticks.map((v) => (
           <g key={v}>
             <line x1={m.left} x2={W - m.right} y1={y(v)} y2={y(v)} stroke="#e3e8ef" />
             <text x={m.left - 10} y={y(v) + 4} textAnchor="end" fontSize="11" fill="#6b7280" className="num">
-              {formatMoney(v, currency, { compact: true, digits: 1 })}
+              {f.money(v, currency, { compact: true, digits: 1 })}
             </text>
           </g>
         ))}
         {Array.from({ length: N + 1 }, (_, i) => (
           <text key={i} x={x(i)} y={H - 14} textAnchor="middle" fontSize="11" fill="#6b7280">
-            {i === 0 ? "Purchase" : N > 6 && i % 2 === 1 && i !== N ? "" : `Year ${i}`}
+            {i === 0 ? s.purchase : N > 6 && i % 2 === 1 && i !== N ? "" : s.yearN(i)}
           </text>
         ))}
         {savingsArea && <path d={savingsArea} fill="#2b6cf6" opacity="0.08" />}
@@ -162,17 +161,17 @@ export function CumulativeChart({ result, comparison, currency }: ChartProps) {
           return (
             <li key={r.tech.id} className="flex items-center gap-3 text-sm">
               <span className="h-1 w-6 rounded-full" style={{ background: TECH_COLORS[r.tech.id] }} />
-              <span className="font-medium text-ink">{r.tech.name}</span>
+              <span className="font-medium text-ink">{techName(r.tech, lang)}</span>
               {c && (
                 <span className="num ml-auto text-right text-slate-ui">
                   {c.paybackMonths === null
-                    ? "no break-even"
+                    ? s.noBreakEven
                     : c.paybackYears !== null && c.paybackYears > N
-                      ? `break-even after ${plural(N, "year")}`
-                      : `break-even in ${formatPayback(c.paybackMonths)}`}
+                      ? s.breakEvenAfter(f.years(N))
+                      : s.breakEvenIn(f.payback(c.paybackMonths))}
                 </span>
               )}
-              {r === hero && <span className="ml-auto text-right text-slate-ui">reference</span>}
+              {r === hero && <span className="ml-auto text-right text-slate-ui">{s.reference}</span>}
             </li>
           );
         })}

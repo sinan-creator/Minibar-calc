@@ -53,6 +53,13 @@ Tariffs and exchange rates are **desk estimates** with a reference year, never l
 each value as *Estimated · year* (with its source) or *Manual entry*, and the printed summary repeats the
 assumptions. Countries without an estimate require the salesperson to type the tariff.
 
+## Languages
+
+English by default, Turkish via the EN/TR switch in the header. All UI strings live in `src/lib/i18n.ts`
+(one object per language; TypeScript enforces that both have the same keys). Numbers and currencies follow the
+language's locale, country names come from `Intl.DisplayNames`, and the choice is stored on the device and
+carried in the URL as `lang=tr` so QR links open in the same language.
+
 ## Stand features
 
 - **Attract mode**: after 3 minutes without a touch the screen resets for the next customer and cycles headline

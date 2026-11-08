@@ -12,6 +12,7 @@ import {
   validateTechnology,
   type FieldErrors,
 } from "@/lib/settings";
+import { useI18n } from "./I18nProvider";
 import { Button } from "./ui";
 
 /**
@@ -46,6 +47,7 @@ const MAX_ATTEMPTS = 5;
 const LOCK_MS = 30_000;
 
 export function AdminPanel() {
+  const { s } = useI18n();
   const settings = useSettings();
   const [open, setOpen] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
@@ -60,8 +62,8 @@ export function AdminPanel() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label="Administrator settings"
-        title="Administrator settings"
+        aria-label={s.adminSettings}
+        title={s.adminSettings}
         className="rounded-full p-2 text-slate-ui/40 transition hover:bg-mist hover:text-navy focus:text-navy"
       >
         <svg aria-hidden viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -83,11 +85,7 @@ export function AdminPanel() {
             aria-labelledby="admin-title"
             className="max-h-[95vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl sm:p-8"
           >
-            {unlocked ? (
-              <SettingsForm settings={settings} onClose={close} />
-            ) : (
-              <PinGate onUnlock={() => setUnlocked(true)} onClose={close} />
-            )}
+            {unlocked ? <SettingsForm settings={settings} onClose={close} /> : <PinGate onUnlock={() => setUnlocked(true)} onClose={close} />}
           </div>
         </div>
       )}
@@ -96,6 +94,7 @@ export function AdminPanel() {
 }
 
 function PinGate({ onUnlock, onClose }: { onUnlock: () => void; onClose: () => void }) {
+  const { s } = useI18n();
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [attempts, setAttempts] = useState(0);
@@ -114,24 +113,24 @@ function PinGate({ onUnlock, onClose }: { onUnlock: () => void; onClose: () => v
     if (n >= MAX_ATTEMPTS) {
       setLockedUntil(Date.now() + LOCK_MS);
       setAttempts(0);
-      setError(`Too many attempts. Try again in ${LOCK_MS / 1000} seconds.`);
+      setError(s.tooManyAttempts(LOCK_MS / 1000));
     } else {
-      setError("Incorrect PIN.");
+      setError(s.incorrectPin);
     }
   };
 
   return (
     <form onSubmit={submit} className="mx-auto max-w-sm py-4 text-center">
       <h2 id="admin-title" className="text-xl font-semibold tracking-tight text-navy">
-        Administrator access
+        {s.adminAccess}
       </h2>
-      <p className="mt-2 text-sm text-slate-ui">Enter the PIN to edit minibar specifications.</p>
+      <p className="mt-2 text-sm text-slate-ui">{s.enterPin}</p>
       <input
         autoFocus
         type="password"
         inputMode="numeric"
         autoComplete="one-time-code"
-        aria-label="Administrator PIN"
+        aria-label={s.adminPin}
         aria-invalid={Boolean(error)}
         className="input mt-6 text-center text-2xl tracking-[0.5em]"
         value={pin}
@@ -146,9 +145,9 @@ function PinGate({ onUnlock, onClose }: { onUnlock: () => void; onClose: () => v
         </p>
       )}
       <div className="mt-6 flex justify-center gap-3">
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose}>{s.cancel}</Button>
         <Button variant="primary" type="submit" disabled={!pin}>
-          Unlock
+          {s.unlock}
         </Button>
       </div>
     </form>
@@ -156,6 +155,7 @@ function PinGate({ onUnlock, onClose }: { onUnlock: () => void; onClose: () => v
 }
 
 function SettingsForm({ settings, onClose }: { settings: MinibarSettings; onClose: () => void }) {
+  const { s } = useI18n();
   const [draft, setDraft] = useState<DraftTech[]>(() => toDraft(settings));
   const [notice, setNotice] = useState<string | null>(null);
   const [importErrors, setImportErrors] = useState<string[]>([]);
@@ -168,8 +168,7 @@ function SettingsForm({ settings, onClose }: { settings: MinibarSettings; onClos
   const hasErrors = Object.values(errors).some((e) => Object.keys(e).length > 0);
   const activeCompetitors = candidate.technologies.filter((t) => t.active && t.id !== HERO_ID).length;
 
-  const patch = (id: TechnologyId, change: Partial<DraftTech>) =>
-    setDraft((d) => d.map((t) => (t.id === id ? { ...t, ...change } : t)));
+  const patch = (id: TechnologyId, change: Partial<DraftTech>) => setDraft((d) => d.map((t) => (t.id === id ? { ...t, ...change } : t)));
 
   const save = () => {
     if (hasErrors || activeCompetitors === 0) return;
@@ -181,7 +180,7 @@ function SettingsForm({ settings, onClose }: { settings: MinibarSettings; onClos
     restoreDefaultSettings();
     setDraft(toDraft(DEFAULT_SETTINGS));
     setImportErrors([]);
-    setNotice("Defaults restored and applied.");
+    setNotice(s.defaultsRestored);
   };
 
   const exportJson = () => {
@@ -200,7 +199,7 @@ function SettingsForm({ settings, onClose }: { settings: MinibarSettings; onClos
     if (parsed.ok) {
       setDraft(toDraft(parsed.value));
       setImportErrors([]);
-      setNotice(`Imported "${file.name}". Review the values, then press Save.`);
+      setNotice(s.imported(file.name));
     } else {
       setImportErrors(parsed.errors);
       setNotice(null);
@@ -213,19 +212,18 @@ function SettingsForm({ settings, onClose }: { settings: MinibarSettings; onClos
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 id="admin-title" className="text-xl font-semibold tracking-tight text-navy">
-            Minibar specifications
+            {s.minibarSpecs}
           </h2>
           <p className="mt-1 text-sm text-slate-ui">
-            Changes apply to every calculation, chart and printed summary on this device.{" "}
-            {isDefaultSettings(settings) ? "Currently using factory defaults." : "Custom values are saved on this device."}
+            {s.specsIntro} {isDefaultSettings(settings) ? s.usingDefaults : s.usingCustom}
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="ghost" onClick={exportJson}>
-            Export JSON
+            {s.exportJson}
           </Button>
           <Button variant="ghost" onClick={() => fileRef.current?.click()}>
-            Import JSON
+            {s.importJson}
           </Button>
           <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={(e) => importJson(e.target.files?.[0])} />
         </div>
@@ -249,7 +247,7 @@ function SettingsForm({ settings, onClose }: { settings: MinibarSettings; onClos
               <legend className="sr-only">{t.name || t.id}</legend>
               <div className="grid gap-4 sm:grid-cols-[1.4fr_1fr_1fr_auto]">
                 <label className="block">
-                  <span className="mb-1.5 block text-xs font-medium text-slate-ui">Display name</span>
+                  <span className="mb-1.5 block text-xs font-medium text-slate-ui">{s.displayName}</span>
                   <input
                     className="input h-11 text-base"
                     maxLength={TECH_LIMITS.nameMaxLength}
@@ -260,7 +258,7 @@ function SettingsForm({ settings, onClose }: { settings: MinibarSettings; onClos
                   {err.name && <span className="mt-1 block text-xs text-red-600">{err.name}</span>}
                 </label>
                 <label className="block">
-                  <span className="mb-1.5 block text-xs font-medium text-slate-ui">Consumption (kWh/day)</span>
+                  <span className="mb-1.5 block text-xs font-medium text-slate-ui">{s.consumptionField}</span>
                   <input
                     className="input h-11 text-base"
                     inputMode="decimal"
@@ -271,7 +269,7 @@ function SettingsForm({ settings, onClose }: { settings: MinibarSettings; onClos
                   {err.dailyKwh && <span className="mt-1 block text-xs text-red-600">{err.dailyKwh}</span>}
                 </label>
                 <label className="block">
-                  <span className="mb-1.5 block text-xs font-medium text-slate-ui">Unit price (USD)</span>
+                  <span className="mb-1.5 block text-xs font-medium text-slate-ui">{s.unitPriceField}</span>
                   <input
                     className="input h-11 text-base"
                     inputMode="decimal"
@@ -282,23 +280,21 @@ function SettingsForm({ settings, onClose }: { settings: MinibarSettings; onClos
                   {err.unitPriceUsd && <span className="mt-1 block text-xs text-red-600">{err.unitPriceUsd}</span>}
                 </label>
                 <label className="flex flex-col items-start">
-                  <span className="mb-1.5 block text-xs font-medium text-slate-ui">Active</span>
+                  <span className="mb-1.5 block text-xs font-medium text-slate-ui">{s.active}</span>
                   <button
                     type="button"
                     role="switch"
                     aria-checked={isHero ? true : t.active}
                     disabled={isHero}
-                    title={isHero ? "The reference technology is always active" : undefined}
+                    title={isHero ? s.heroAlwaysActive : undefined}
                     onClick={() => patch(t.id, { active: !t.active })}
                     className={`relative mt-1.5 h-7 w-12 rounded-full transition disabled:opacity-50 ${isHero || t.active ? "bg-accent" : "bg-line"}`}
                   >
-                    <span
-                      className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-[left] ${isHero || t.active ? "left-[22px]" : "left-0.5"}`}
-                    />
+                    <span className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-[left] ${isHero || t.active ? "left-[22px]" : "left-0.5"}`} />
                   </button>
                 </label>
               </div>
-              {isHero && <p className="mt-3 text-xs text-slate-ui">Reference technology: all savings and payback figures are measured against it.</p>}
+              {isHero && <p className="mt-3 text-xs text-slate-ui">{s.referenceNote}</p>}
             </fieldset>
           );
         })}
@@ -306,18 +302,18 @@ function SettingsForm({ settings, onClose }: { settings: MinibarSettings; onClos
 
       {activeCompetitors === 0 && (
         <p role="alert" className="mt-4 text-sm text-red-600">
-          Keep at least one competitor technology active.
+          {s.keepOneCompetitor}
         </p>
       )}
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6">
         <Button variant="danger" onClick={restore}>
-          Restore defaults
+          {s.restoreDefaults}
         </Button>
         <div className="flex gap-3">
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onClose}>{s.cancel}</Button>
           <Button variant="primary" onClick={save} disabled={hasErrors || activeCompetitors === 0}>
-            Save
+            {s.save}
           </Button>
         </div>
       </div>
