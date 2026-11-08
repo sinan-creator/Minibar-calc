@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import type { CalcResult, Comparison, TechResult } from "@/lib/calc";
-import { HERO_ID, TECH_BLURBS } from "@/lib/defaults";
+import { BASE_PATH, HERO_ID, TECH_BLURBS, TECH_FACTS, TECH_IMAGES } from "@/lib/defaults";
 import { formatKwh, formatMoney, formatNumber, formatPayback } from "@/lib/format";
 import { EmptyState, TECH_COLORS, plural } from "./ui";
 
@@ -60,6 +61,8 @@ function TechCard({
 }) {
   const showUsd = currency !== "USD";
   const energyCut = cmp && cmp.competitor.annualKwh > 0 ? cmp.annualEnergySavedKwh / cmp.competitor.annualKwh : null;
+  const facts = TECH_FACTS[r.tech.id];
+  const image = TECH_IMAGES[r.tech.id];
 
   return (
     <article
@@ -69,6 +72,21 @@ function TechCard({
           : `border bg-white ${selected ? "border-accent/60" : "border-line"}`
       }`}
     >
+      {image && (
+        <figure className="mb-5 overflow-hidden rounded-2xl bg-mist">
+          <Image
+            src={`${BASE_PATH}${image}`}
+            alt={`${r.tech.name} minibar, rear view`}
+            width={1200}
+            height={900}
+            sizes="(min-width: 768px) 33vw, 100vw"
+            className="aspect-[4/3] h-auto w-full object-cover"
+          />
+          <figcaption className={`px-4 py-2 text-[11px] uppercase tracking-[0.14em] ${isHero ? "bg-white/10 text-white/70" : "text-slate-ui"}`}>
+            Rear view
+          </figcaption>
+        </figure>
+      )}
       <header>
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
           <div className="flex items-center gap-2.5">
@@ -91,6 +109,8 @@ function TechCard({
       </header>
 
       <dl className="mt-6 space-y-4">
+        <Row label="Cooling" value={facts.principle} small />
+        <Row label="Noise level" value={facts.noise} small />
         <Row
           label="Purchase price per unit"
           value={formatMoney(r.tech.unitPriceUsd * fxRate, currency)}
@@ -125,12 +145,12 @@ function TechCard({
   );
 }
 
-function Row({ label, value, sub }: { label: string; value: string; sub?: string }) {
+function Row({ label, value, sub, small }: { label: string; value: string; sub?: string; small?: boolean }) {
   return (
     <div className="flex items-baseline justify-between gap-4">
-      <dt className="text-sm opacity-70">{label}</dt>
+      <dt className="shrink-0 text-sm opacity-70">{label}</dt>
       <dd className="text-right">
-        <div className="num text-base font-semibold">{value}</div>
+        <div className={`num font-semibold ${small ? "text-sm" : "text-base"}`}>{value}</div>
         {sub && <div className="num text-xs opacity-60">{sub}</div>}
       </dd>
     </div>

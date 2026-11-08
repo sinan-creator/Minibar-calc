@@ -41,9 +41,26 @@ export const DEFAULT_SETTINGS: MinibarSettings = {
 
 /** Short marketing descriptions, keyed by technology id (not editable). */
 export const TECH_BLURBS: Record<TechnologyId, string> = {
-  absorption: "Silent, but heats refrigerant around the clock. The highest energy use of the three.",
-  peltier: "Solid-state cooling with no compressor. Simple, but inefficient at hotel room temperatures.",
-  inverter: "Variable-speed compressor that runs only as hard as needed. The lowest energy use.",
+  absorption: "Completely silent with no moving parts. The price of that silence is energy.",
+  peltier: "No compressor or gas, so it is cheap to buy. Needs constant power and struggles in warm rooms.",
+  inverter: "Variable-speed compressor that runs only as hard as needed. A+++ efficiency, nearly silent.",
+};
+
+/** Fixed product facts shown on cards and in the comparison table (from the Elektromarla product pages). */
+export const TECH_FACTS: Record<TechnologyId, { principle: string; noise: string; idealFor: string }> = {
+  absorption: { principle: "Ammonia absorption, heating element", noise: "0 dB · fully silent", idealFor: "Total silence" },
+  peltier: { principle: "Thermoelectric module", noise: "≈ 30 dB", idealFor: "Budget projects in cool climates" },
+  inverter: { principle: "Variable-speed compressor", noise: "26–29 dB", idealFor: "Lowest running cost" },
+};
+
+/**
+ * Rear-view product photos per technology (fronts look identical), served from public/.
+ * Add a file under public/tech/ and list it here; technologies without an entry show no photo.
+ */
+export const TECH_IMAGES: Partial<Record<TechnologyId, string>> = {
+  absorption: "/tech/absorption.jpg",
+  peltier: "/tech/peltier.jpg",
+  inverter: "/tech/inverter.jpg",
 };
 
 /** Validation ceilings for administrator input. */

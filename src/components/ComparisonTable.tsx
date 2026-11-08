@@ -1,7 +1,7 @@
 "use client";
 
 import type { CalcResult } from "@/lib/calc";
-import { HERO_ID } from "@/lib/defaults";
+import { HERO_ID, TECH_FACTS } from "@/lib/defaults";
 import { formatKwh, formatMoney, formatNumber, formatPayback } from "@/lib/format";
 import { EmptyState, Panel, TECH_COLORS, plural } from "./ui";
 
@@ -30,6 +30,9 @@ export function ComparisonTable({ result, currency, years, fxRate }: Props) {
   const money = (v: number) => formatMoney(v, currency);
 
   const rows: { label: string; cells: (string | { main: string; sub?: string })[] }[] = [
+    { label: "Cooling principle", cells: result.results.map((r) => TECH_FACTS[r.tech.id].principle) },
+    { label: "Noise level", cells: result.results.map((r) => TECH_FACTS[r.tech.id].noise) },
+    { label: "Ideal for", cells: result.results.map((r) => TECH_FACTS[r.tech.id].idealFor) },
     {
       label: "Daily consumption per unit",
       cells: result.results.map((r) => `${formatNumber(r.tech.dailyKwh, 3)} kWh`),
