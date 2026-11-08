@@ -61,8 +61,7 @@ assumptions. Countries without an estimate require the salesperson to type the t
 - **QR code**: the QR button encodes the current inputs in the URL so the visitor opens the same comparison on
   their phone. Set `NEXT_PUBLIC_PUBLIC_URL=https://your-public-address` at build time so the code points at the
   deployed app rather than the kiosk's localhost. The same URL format works as a deep link from the website.
-- **Equivalents**: saved kWh translated into CO₂ (per-country grid factor estimates in `tariffs.ts`), household
-  electricity and electric-car kilometres, with the reference values shown.
+- **Energy saved**: one large kWh figure per year and over the selected period for the chosen comparison.
 
 ## Admin Settings
 

@@ -70,16 +70,6 @@ export const ATTRACT_ROTATE_MS = 6_000;
 /** Markets cycled through on the attract screen (only those with tariff + FX estimates are used). */
 export const SHOWCASE_COUNTRIES = ["TR", "DE", "AE", "SA", "GB", "EG", "QA", "US"];
 
-/** Reference values for the "what the savings equal" tiles. All are rounded public averages. */
-export const EQUIVALENTS = {
-  /** Typical household electricity use, kWh per year. */
-  householdKwhPerYear: 3500,
-  /** Electric car consumption, kWh per km. */
-  evKwhPerKm: 0.18,
-  /** Grid emission factor used when a country has no estimate, kg CO₂ per kWh. */
-  defaultGridKgPerKwh: 0.45,
-} as const;
-
 /**
  * Admin PIN. Set NEXT_PUBLIC_ADMIN_PIN at build time to change it.
  * A client-side PIN only hides controls from customers on the exhibition

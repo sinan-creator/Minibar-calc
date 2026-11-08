@@ -10,7 +10,7 @@ import { AdminPanel } from "./AdminPanel";
 import { AttractMode } from "./AttractMode";
 import { CumulativeChart, OwnershipBarChart } from "./Charts";
 import { ComparisonTable } from "./ComparisonTable";
-import { Equivalents } from "./Equivalents";
+import { EnergySaved } from "./EnergySaved";
 import { Header } from "./Header";
 import { Headline } from "./Headline";
 import { InputsPanel } from "./InputsPanel";
@@ -101,7 +101,7 @@ export function Calculator() {
 
             <section className="min-w-0 space-y-6">
               <TechCards result={result} comparison={comparison} currency={country.currency} years={inputs.years} fxRate={numeric.fxRate} />
-              <Equivalents comparison={comparison} countryCode={country.code} years={inputs.years} />
+              <EnergySaved comparison={comparison} years={inputs.years} />
               <div className="grid gap-6 2xl:grid-cols-2">
                 <OwnershipBarChart result={result} comparison={comparison} currency={country.currency} years={inputs.years} />
                 <CumulativeChart result={result} comparison={comparison} currency={country.currency} years={inputs.years} />
