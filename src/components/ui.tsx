@@ -9,6 +9,7 @@ export const TECH_COLORS: Record<TechnologyId, string> = {
   absorption: "#a9b3c4",
   peltier: "#6f87a9",
   inverter: "#2b6cf6",
+  custom: "#4f8a8b",
 };
 
 export const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;
@@ -66,6 +67,22 @@ export function Segmented<T extends string | number>({
         );
       })}
     </div>
+  );
+}
+
+export function Switch({ on, disabled, label, onChange }: { on: boolean; disabled?: boolean; label: string; onChange: () => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      disabled={disabled}
+      onClick={onChange}
+      className={`relative h-7 w-12 shrink-0 rounded-full transition disabled:opacity-50 ${on ? "bg-accent" : "bg-line"}`}
+    >
+      <span className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-[left] ${on ? "left-[22px]" : "left-0.5"}`} />
+    </button>
   );
 }
 

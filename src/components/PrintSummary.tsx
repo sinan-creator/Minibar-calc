@@ -153,15 +153,13 @@ export function PrintSummary({ inputs, country, result, comparison, settings, ta
           <h2 className="mb-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-slate-ui">Minibar specifications</h2>
           <table className="w-full border-collapse">
             <tbody className="num">
-              {settings.technologies
-                .filter((t) => t.active)
-                .map((t) => (
+              {(result ? result.results.map((r) => r.tech) : settings.technologies.filter((t) => t.active)).map((t) => (
                   <tr key={t.id} className="border-b border-line">
                     <td className="py-1 pr-2">{t.name}</td>
                     <td className="py-1 pr-2 text-right">{formatNumber(t.dailyKwh, 3)} kWh/day</td>
                     <td className="py-1 text-right">{formatMoney(t.unitPriceUsd, "USD")} / unit</td>
                   </tr>
-                ))}
+              ))}
             </tbody>
           </table>
         </div>

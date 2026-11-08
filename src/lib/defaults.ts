@@ -6,7 +6,8 @@
  * current settings via useSettings().
  */
 
-export type TechnologyId = "absorption" | "peltier" | "inverter";
+/** "custom" is the visitor's own minibar, entered per customer at the stand (not managed by the admin). */
+export type TechnologyId = "absorption" | "peltier" | "inverter" | "custom";
 
 export interface Technology {
   id: TechnologyId;
@@ -27,7 +28,10 @@ export interface MinibarSettings {
 
 /** The technology every comparison is measured against. It cannot be deactivated. */
 export const HERO_ID: TechnologyId = "inverter";
+export const CUSTOM_ID: TechnologyId = "custom";
+export const CUSTOM_DEFAULT_NAME = "Your current minibar";
 
+/** Technologies managed in Admin Settings. */
 export const TECHNOLOGY_IDS: readonly TechnologyId[] = ["absorption", "peltier", "inverter"];
 
 export const DEFAULT_SETTINGS: MinibarSettings = {
@@ -44,6 +48,7 @@ export const TECH_BLURBS: Record<TechnologyId, string> = {
   absorption: "Silent, but heats refrigerant around the clock. The highest energy use of the three.",
   peltier: "Solid-state cooling with no compressor. Simple, but inefficient at hotel room temperatures.",
   inverter: "Variable-speed compressor that runs only as hard as needed. The lowest energy use.",
+  custom: "The minibar currently installed in your rooms, as entered at the stand.",
 };
 
 /** Validation ceilings for administrator input. */
@@ -64,6 +69,22 @@ export const DEFAULT_ROOMS = 200;
 export const ROOM_LIMITS = { min: 1, max: 10000 } as const;
 export const DEFAULT_COUNTRY = "TR";
 
+/** Exhibition attract mode: idle time before the screen resets and shows rotating headlines. */
+export const ATTRACT_IDLE_MS = 180_000;
+export const ATTRACT_ROTATE_MS = 6_000;
+/** Markets cycled through on the attract screen (only those with tariff + FX estimates are used). */
+export const SHOWCASE_COUNTRIES = ["TR", "DE", "AE", "SA", "GB", "EG", "QA", "US"];
+
+/** Reference values for the "what the savings equal" tiles. All are rounded public averages. */
+export const EQUIVALENTS = {
+  /** Typical household electricity use, kWh per year. */
+  householdKwhPerYear: 3500,
+  /** Electric car consumption, kWh per km. */
+  evKwhPerKm: 0.18,
+  /** Grid emission factor used when a country has no estimate, kg CO₂ per kWh. */
+  defaultGridKgPerKwh: 0.45,
+} as const;
+
 /**
  * Admin PIN. Set NEXT_PUBLIC_ADMIN_PIN at build time to change it.
  * A client-side PIN only hides controls from customers on the exhibition
@@ -71,6 +92,9 @@ export const DEFAULT_COUNTRY = "TR";
  * See README for the optional authenticated backend design.
  */
 export const ADMIN_PIN = process.env.NEXT_PUBLIC_ADMIN_PIN ?? "1234";
+
+/** Public address the QR code points to (e.g. https://elektromarla.com/calculator). Falls back to the current origin. */
+export const PUBLIC_URL = process.env.NEXT_PUBLIC_PUBLIC_URL ?? "";
 
 export const COMPANY = "Elektromarla";
 export const APP_NAME = "Elektromarla Minibar Savings Calculator";

@@ -51,6 +51,19 @@ Tariffs and exchange rates are **desk estimates** with a reference year, never l
 each value as *Estimated · year* (with its source) or *Manual entry*, and the printed summary repeats the
 assumptions. Countries without an estimate require the salesperson to type the tariff.
 
+## Stand features
+
+- **Attract mode**: after 3 minutes without a touch the screen resets for the next customer and cycles headline
+  savings for showcase markets until someone touches it (`ATTRACT_IDLE_MS`, `SHOWCASE_COUNTRIES` in defaults).
+- **Live counter**: "saved so far today", ticking from local midnight at the annual savings rate.
+- **QR code**: the QR button encodes the current inputs in the URL so the visitor opens the same comparison on
+  their phone. Set `NEXT_PUBLIC_PUBLIC_URL=https://your-public-address` at build time so the code points at the
+  deployed app rather than the kiosk's localhost. The same URL format works as a deep link from the website.
+- **Customer's current minibar**: optional fourth column from the rating label (kWh/day and local price; 0 means
+  the customer keeps the existing units, so payback is measured against doing nothing).
+- **Equivalents**: saved kWh translated into CO₂ (per-country grid factor estimates in `tariffs.ts`), household
+  electricity and electric-car kilometres, with the reference values shown.
+
 ## Admin Settings
 
 A discreet gear icon in the footer opens a PIN-protected panel where the administrator can edit, for each

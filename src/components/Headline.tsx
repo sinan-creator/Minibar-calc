@@ -2,8 +2,9 @@
 
 import type { CalcResult, Comparison } from "@/lib/calc";
 import type { Country } from "@/lib/countries";
-import { COMPANY, type TechnologyId } from "@/lib/defaults";
+import { COMPANY, CUSTOM_ID, type Technology, type TechnologyId } from "@/lib/defaults";
 import { formatMoney, formatNumber, formatRate } from "@/lib/format";
+import { LiveCounter } from "./LiveCounter";
 import { Segmented } from "./ui";
 
 interface Props {
@@ -16,8 +17,9 @@ interface Props {
   onMode: (id: TechnologyId) => void;
 }
 
-/** "Thermoelectric (Peltier)" → "Peltier", "Inverter Compressor" → "Inverter". */
-const shortName = (name: string) => /\(([^)]+)\)/.exec(name)?.[1] ?? name.split(" ")[0];
+/** "Thermoelectric (Peltier)" → "Peltier", "Inverter Compressor" → "Inverter"; the visitor's minibar keeps its name. */
+const shortName = (t: Technology) =>
+  t.id === CUSTOM_ID ? (t.name.length > 18 ? `${t.name.slice(0, 17)}…` : t.name) : (/\(([^)]+)\)/.exec(t.name)?.[1] ?? t.name.split(" ")[0]);
 
 export function Headline({ result, comparison, country, rooms, tariff, mode, onMode }: Props) {
   const currency = country.currency;
@@ -52,6 +54,8 @@ export function Headline({ result, comparison, country, rooms, tariff, mode, onM
         )}
       </p>
 
+      {comparison && <LiveCounter annualSavings={comparison.annualSavings} currency={currency} />}
+
       {result && result.comparisons.length > 1 && (
         <div className="mt-8">
           <Segmented<TechnologyId>
@@ -61,7 +65,7 @@ export function Headline({ result, comparison, country, rooms, tariff, mode, onM
             onChange={onMode}
             options={result.comparisons.map((c) => ({
               value: c.competitor.tech.id,
-              label: `${shortName(result.hero.tech.name)} vs ${shortName(c.competitor.tech.name)}`,
+              label: `${shortName(result.hero.tech)} vs ${shortName(c.competitor.tech)}`,
             }))}
           />
         </div>

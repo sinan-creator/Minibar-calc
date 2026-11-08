@@ -145,5 +145,29 @@ export const FX_REFERENCE: Record<string, FxReference> = {
   IQD: { rate: 1310, year: 2025, source: "Official CBI rate", pegged: true },
 };
 
+export interface GridFactor {
+  /** kg CO₂ per kWh of grid electricity. */
+  kgPerKwh: number;
+  year: number;
+  source: string;
+}
+
+const GRID_SOURCE = "Desk estimate from published grid-intensity averages (IEA / Ember style)";
+
+/** Keyed by ISO 3166-1 alpha-2 country code. Rounded desk estimates, not verified figures. */
+export const GRID_FACTORS: Record<string, GridFactor> = Object.fromEntries(
+  (
+    [
+      ["TR", 0.42], ["EG", 0.47], ["SA", 0.6], ["AE", 0.42], ["QA", 0.49], ["KW", 0.58], ["BH", 0.62], ["OM", 0.54],
+      ["JO", 0.45], ["GB", 0.21], ["DE", 0.35], ["FR", 0.06], ["IT", 0.26], ["ES", 0.15], ["PT", 0.14], ["GR", 0.33],
+      ["NL", 0.3], ["BE", 0.14], ["AT", 0.11], ["IE", 0.28], ["CY", 0.56], ["HR", 0.17], ["MT", 0.38], ["CH", 0.03],
+      ["PL", 0.65], ["CZ", 0.42], ["RO", 0.26], ["US", 0.37], ["CA", 0.12], ["MX", 0.4], ["LY", 0.56], ["MA", 0.62],
+      ["TN", 0.45], ["DZ", 0.5], ["AZ", 0.47], ["GE", 0.12], ["KZ", 0.65], ["UZ", 0.45], ["IN", 0.71], ["CN", 0.58],
+      ["JP", 0.46], ["AU", 0.55], ["ZA", 0.85], ["MV", 0.65], ["TH", 0.45], ["ID", 0.72], ["SG", 0.41],
+    ] as const
+  ).map(([code, kgPerKwh]) => [code, { kgPerKwh, year: 2023, source: GRID_SOURCE }]),
+);
+
 export const tariffFor = (countryCode: string): TariffEstimate | undefined => TARIFF_ESTIMATES[countryCode];
 export const fxFor = (currency: string): FxReference | undefined => FX_REFERENCE[currency];
+export const gridFactorFor = (countryCode: string): GridFactor | undefined => GRID_FACTORS[countryCode];

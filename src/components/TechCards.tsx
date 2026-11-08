@@ -16,7 +16,7 @@ interface Props {
 export function TechCards({ result, comparison, currency, years, fxRate }: Props) {
   if (!result) return <EmptyState />;
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className={`grid gap-4 ${result.results.length > 3 ? "md:grid-cols-2 2xl:grid-cols-4" : "md:grid-cols-3"}`}>
       {result.results.map((r) => {
         const isHero = r.tech.id === HERO_ID;
         const cmp = result.comparisons.find((c) => c.competitor === r) ?? null;
