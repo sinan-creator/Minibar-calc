@@ -57,7 +57,6 @@ assumptions. Countries without an estimate require the salesperson to type the t
 
 - **Attract mode**: after 3 minutes without a touch the screen resets for the next customer and cycles headline
   savings for showcase markets until someone touches it (`ATTRACT_IDLE_MS`, `SHOWCASE_COUNTRIES` in defaults).
-- **Live counter**: "saved so far today", ticking from local midnight at the annual savings rate.
 - **QR code**: the QR button encodes the current inputs in the URL so the visitor opens the same comparison on
   their phone. Set `NEXT_PUBLIC_PUBLIC_URL=https://your-public-address` at build time so the code points at the
   deployed app rather than the kiosk's localhost. The same URL format works as a deep link from the website.

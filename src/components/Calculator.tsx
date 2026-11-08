@@ -3,7 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { calculate } from "@/lib/calc";
 import { findCountry } from "@/lib/countries";
-import { ATTRACT_IDLE_MS, DEFAULT_COUNTRY, MIN_CHART_YEARS } from "@/lib/defaults";
+import { ATTRACT_IDLE_MS, DEFAULT_COUNTRY, HERO_ID, MIN_CHART_YEARS } from "@/lib/defaults";
 import { DISCLAIMER, fromSearchParams, initialInputs, marketDefaults, parseDecimal, toSearchParams, validateInputs, type SalesInputs } from "@/lib/inputs";
 import { useSettings } from "@/lib/settings";
 import { AdminPanel } from "./AdminPanel";
@@ -84,19 +84,18 @@ export function Calculator() {
         <Header onReset={reset} onPrint={() => window.print()} onShare={() => setShareOpen(true)} />
 
         <main className="mx-auto w-full max-w-7xl flex-1 px-5 pb-20 sm:px-8">
-          <Headline
-            result={result}
-            comparison={comparison}
-            country={country}
-            rooms={numeric.rooms}
-            tariff={numeric.tariff}
-            mode={inputs.mode}
-            onMode={(mode) => update({ mode })}
-          />
+          <Headline comparison={comparison} country={country} rooms={numeric.rooms} />
 
-          <div className="mt-12 grid items-start gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
+          <div className="mt-10 grid items-start gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
             <aside className="xl:sticky xl:top-24">
-              <InputsPanel inputs={inputs} country={country} errors={errors} onChange={update} onSelectCountry={selectCountry} />
+              <InputsPanel
+                inputs={inputs}
+                country={country}
+                errors={errors}
+                competitors={settings.technologies.filter((t) => t.active && t.id !== HERO_ID)}
+                onChange={update}
+                onSelectCountry={selectCountry}
+              />
             </aside>
 
             <section className="min-w-0 space-y-6">

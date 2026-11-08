@@ -1,26 +1,17 @@
 "use client";
 
-import type { CalcResult, Comparison } from "@/lib/calc";
+import type { Comparison } from "@/lib/calc";
 import type { Country } from "@/lib/countries";
-import { COMPANY, type Technology, type TechnologyId } from "@/lib/defaults";
-import { formatMoney, formatNumber, formatRate } from "@/lib/format";
-import { LiveCounter } from "./LiveCounter";
-import { Segmented } from "./ui";
+import { COMPANY } from "@/lib/defaults";
+import { formatMoney, formatNumber } from "@/lib/format";
 
 interface Props {
-  result: CalcResult | null;
   comparison: Comparison | null;
   country: Country;
   rooms: number;
-  tariff: number;
-  mode: TechnologyId;
-  onMode: (id: TechnologyId) => void;
 }
 
-/** "Thermoelectric (Peltier)" → "Peltier", "Inverter Compressor" → "Inverter". */
-const shortName = (t: Technology) => /\(([^)]+)\)/.exec(t.name)?.[1] ?? t.name.split(" ")[0];
-
-export function Headline({ result, comparison, country, rooms, tariff, mode, onMode }: Props) {
+export function Headline({ comparison, country, rooms }: Props) {
   const currency = country.currency;
   const savingsUsd = comparison ? Math.max(0, comparison.annualSavingsUsd) : null;
 
@@ -34,41 +25,21 @@ export function Headline({ result, comparison, country, rooms, tariff, mode, onM
         <span className="num text-accent">{savingsUsd === null ? "—" : formatMoney(savingsUsd, "USD")}</span> in electricity
         costs every year with {COMPANY} Inverter Minibars.
       </h1>
-      <p className="mt-5 max-w-3xl text-base text-slate-ui sm:text-lg">
+      <p className="mt-5 text-base text-slate-ui sm:text-lg">
         {comparison ? (
           <>
             {currency !== "USD" && (
               <>
                 ≈ <span className="num font-medium text-ink">{formatMoney(Math.max(0, comparison.annualSavings), currency)}</span> per
-                year{" "}
+                year ·{" "}
               </>
             )}
-            compared with {comparison.competitor.tech.name} minibars across {formatNumber(rooms)} rooms at{" "}
-            <span className="num">{formatRate(tariff, currency)}</span> per kWh. That is{" "}
-            <span className="num font-medium text-ink">{formatNumber(Math.max(0, comparison.annualEnergySavedKwh))} kWh</span> less
-            electricity every year.
+            compared with {comparison.competitor.tech.name} minibars · {formatNumber(rooms)} rooms
           </>
         ) : (
           "Complete the hotel details to see the savings for this market."
         )}
       </p>
-
-      {comparison && <LiveCounter annualSavings={comparison.annualSavings} currency={currency} />}
-
-      {result && result.comparisons.length > 1 && (
-        <div className="mt-8">
-          <Segmented<TechnologyId>
-            ariaLabel="Comparison mode"
-            size="lg"
-            value={comparison?.competitor.tech.id ?? mode}
-            onChange={onMode}
-            options={result.comparisons.map((c) => ({
-              value: c.competitor.tech.id,
-              label: `${shortName(result.hero.tech)} vs ${shortName(c.competitor.tech)}`,
-            }))}
-          />
-        </div>
-      )}
     </section>
   );
 }

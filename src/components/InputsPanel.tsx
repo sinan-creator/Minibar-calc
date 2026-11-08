@@ -1,7 +1,7 @@
 "use client";
 
 import type { Country } from "@/lib/countries";
-import { PERIOD_OPTIONS, ROOM_LIMITS, type PeriodYears } from "@/lib/defaults";
+import { PERIOD_OPTIONS, ROOM_LIMITS, type PeriodYears, type Technology, type TechnologyId } from "@/lib/defaults";
 import type { InputErrors, SalesInputs } from "@/lib/inputs";
 import { fxFor, tariffFor } from "@/lib/tariffs";
 import { CountrySelect } from "./CountrySelect";
@@ -11,9 +11,14 @@ interface Props {
   inputs: SalesInputs;
   country: Country;
   errors: InputErrors;
+  /** Active competitor technologies the headline can compare against. */
+  competitors: Technology[];
   onChange: (patch: Partial<SalesInputs>) => void;
   onSelectCountry: (code: string) => void;
 }
+
+/** "Thermoelectric (Peltier)" → "Peltier". */
+const shortName = (t: Technology) => /\(([^)]+)\)/.exec(t.name)?.[1] ?? t.name.split(" ")[0];
 
 function currencyName(code: string) {
   try {
@@ -23,7 +28,8 @@ function currencyName(code: string) {
   }
 }
 
-export function InputsPanel({ inputs, country, errors, onChange, onSelectCountry }: Props) {
+export function InputsPanel({ inputs, country, errors, competitors, onChange, onSelectCountry }: Props) {
+  const activeMode = competitors.some((t) => t.id === inputs.mode) ? inputs.mode : competitors[0]?.id;
   const tariffMeta = tariffFor(country.code) ?? null;
   const fxMeta = fxFor(country.currency) ?? null;
   const isUsd = country.currency === "USD";
@@ -136,6 +142,18 @@ export function InputsPanel({ inputs, country, errors, onChange, onSelectCountry
             className="w-full"
           />
         </Field>
+
+        {competitors.length > 1 && activeMode && (
+          <Field label="Compare Inverter against">
+            <Segmented<TechnologyId>
+              ariaLabel="Comparison mode"
+              value={activeMode}
+              onChange={(mode) => onChange({ mode })}
+              options={competitors.map((t) => ({ value: t.id, label: shortName(t) }))}
+              className="w-full"
+            />
+          </Field>
+        )}
       </div>
     </div>
   );

@@ -31,22 +31,6 @@ export function formatMoney(value: number, currency: string, opts: { digits?: nu
   return moneyFormatter(currency, opts.digits ?? 0, opts.compact ?? false).format(value);
 }
 
-/** Always two decimals, for the ticking live counter. */
-export function formatMoneyExact(value: number, currency: string) {
-  if (!Number.isFinite(value)) return "—";
-  try {
-    return new Intl.NumberFormat(LOCALE, {
-      style: "currency",
-      currency,
-      currencyDisplay: "narrowSymbol",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
-  } catch {
-    return `${value.toFixed(2)} ${currency}`;
-  }
-}
-
 /** Up to 4 decimals, used for tariffs and exchange rates. */
 export function formatRate(value: number, currency: string) {
   if (!Number.isFinite(value)) return "—";
