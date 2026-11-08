@@ -27,6 +27,7 @@ export function Header({ onReset, onPrint, onShare, onLang }: Props) {
           <Segmented<Lang>
             ariaLabel={s.language}
             size="sm"
+            wrap={false}
             value={lang}
             onChange={(l) => {
               track("language_change", { lang: l });

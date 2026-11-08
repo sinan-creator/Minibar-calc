@@ -41,6 +41,7 @@ export function Segmented<T extends string | number>({
   ariaLabel,
   size = "md",
   className = "",
+  wrap = true,
 }: {
   value: T;
   onChange: (value: T) => void;
@@ -48,10 +49,12 @@ export function Segmented<T extends string | number>({
   ariaLabel: string;
   size?: "sm" | "md" | "lg";
   className?: string;
+  /** Allow options to wrap onto a second row on narrow screens (default true). */
+  wrap?: boolean;
 }) {
   const sizes = { sm: "h-9 px-3 text-xs", md: "h-10 px-4 text-sm", lg: "h-12 px-5 text-base" }[size];
   return (
-    <div role="radiogroup" aria-label={ariaLabel} className={`inline-flex max-w-full flex-wrap rounded-full bg-mist p-1 ${className}`}>
+    <div role="radiogroup" aria-label={ariaLabel} className={`inline-flex max-w-full ${wrap ? "flex-wrap" : "flex-nowrap"} rounded-full bg-mist p-1 ${className}`}>
       {options.map((o) => {
         const active = o.value === value;
         return (
