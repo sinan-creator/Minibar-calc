@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #0b1f3a;
-  --color-navy-700: #163462;
+  /* Navy sampled from the Elektromarla logo */
+  --color-navy: #1c2c59;
+  --color-navy-700: #2a3f7c;
   --color-ink: #111827;
   --color-slate-ui: #5f6b7a;
   --color-mist: #f4f6f9;

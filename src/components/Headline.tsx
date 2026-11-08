@@ -16,6 +16,9 @@ interface Props {
   onMode: (id: TechnologyId) => void;
 }
 
+/** "Thermoelectric (Peltier)" → "Peltier", "Inverter Compressor" → "Inverter". */
+const shortName = (name: string) => /\(([^)]+)\)/.exec(name)?.[1] ?? name.split(" ")[0];
+
 export function Headline({ result, comparison, country, rooms, tariff, mode, onMode }: Props) {
   const currency = country.currency;
   const savingsUsd = comparison ? Math.max(0, comparison.annualSavingsUsd) : null;
@@ -58,7 +61,7 @@ export function Headline({ result, comparison, country, rooms, tariff, mode, onM
             onChange={onMode}
             options={result.comparisons.map((c) => ({
               value: c.competitor.tech.id,
-              label: `${result.hero.tech.name.split(" ")[0]} vs ${c.competitor.tech.name.replace(/\s*\(.*\)/, "")}`,
+              label: `${shortName(result.hero.tech.name)} vs ${shortName(c.competitor.tech.name)}`,
             }))}
           />
         </div>

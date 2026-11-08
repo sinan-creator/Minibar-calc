@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   applicationName: APP_NAME,
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Minibar Savings" },
-  icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }], apple: "/apple-touch-icon.png" },
+  icons: { icon: [{ url: "/icon-192.png", type: "image/png", sizes: "192x192" }], apple: "/apple-touch-icon.png" },
   robots: { index: false, follow: false },
 };
 

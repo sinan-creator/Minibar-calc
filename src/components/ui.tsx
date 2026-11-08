@@ -25,7 +25,7 @@ export function Button({ variant = "secondary", className = "", type = "button",
   return (
     <button
       type={type}
-      className={`inline-flex h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-medium transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40 ${styles} ${className}`}
+      className={`inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 text-sm font-medium transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40 ${styles} ${className}`}
       {...props}
     />
   );
@@ -47,7 +47,7 @@ export function Segmented<T extends string | number>({
   className?: string;
 }) {
   return (
-    <div role="radiogroup" aria-label={ariaLabel} className={`inline-flex max-w-full rounded-full bg-mist p-1 ${className}`}>
+    <div role="radiogroup" aria-label={ariaLabel} className={`inline-flex max-w-full flex-wrap rounded-full bg-mist p-1 ${className}`}>
       {options.map((o) => {
         const active = o.value === value;
         return (

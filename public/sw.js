@@ -1,7 +1,7 @@
 /* Elektromarla Minibar Savings Calculator – offline cache for the static export.
  * Bump CACHE on each deploy; activate() purges older caches. */
-const CACHE = "elektromarla-minibar-v2";
-const SHELL = ["/", "/index.html", "/manifest.webmanifest", "/icon.svg"];
+const CACHE = "elektromarla-minibar-v3";
+const SHELL = ["/", "/index.html", "/manifest.webmanifest", "/logo.png", "/icon-192.png"];
 const SHELL_PATHS = new Set(["/", "/index.html"]);
 
 /** Only successful, same-origin, non-redirected responses may enter the cache. */

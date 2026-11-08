@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useSyncExternalStore } from "react";
 import type { CalcResult, Comparison } from "@/lib/calc";
 import type { Country } from "@/lib/countries";
@@ -37,8 +38,8 @@ export function PrintSummary({ inputs, country, result, comparison, settings, ta
     <div className="hidden print:block text-[11px] leading-snug text-ink">
       <header className="flex items-end justify-between border-b border-navy pb-3">
         <div>
-          <div className="text-2xl font-semibold tracking-tight text-navy">{COMPANY}</div>
-          <div className="text-sm text-slate-ui">Minibar electricity savings summary</div>
+          <Image src="/logo.png" alt={COMPANY} width={2685} height={729} className="h-14 w-auto" />
+          <div className="mt-2 text-sm text-slate-ui">Minibar electricity savings summary</div>
         </div>
         <div className="text-right text-slate-ui">
           <div>{today}</div>

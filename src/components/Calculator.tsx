@@ -8,6 +8,7 @@ import { DISCLAIMER, initialInputs, marketDefaults, parseDecimal, validateInputs
 import { useSettings } from "@/lib/settings";
 import { AdminPanel } from "./AdminPanel";
 import { CumulativeChart, OwnershipBarChart } from "./Charts";
+import { ComparisonTable } from "./ComparisonTable";
 import { Header } from "./Header";
 import { Headline } from "./Headline";
 import { InputsPanel } from "./InputsPanel";
@@ -67,6 +68,7 @@ export function Calculator() {
                 <OwnershipBarChart result={result} comparison={comparison} currency={country.currency} years={inputs.years} />
                 <CumulativeChart result={result} comparison={comparison} currency={country.currency} years={inputs.years} />
               </div>
+              <ComparisonTable result={result} currency={country.currency} years={inputs.years} fxRate={numeric.fxRate} />
             </section>
           </div>
         </main>
