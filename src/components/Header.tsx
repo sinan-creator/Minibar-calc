@@ -21,7 +21,7 @@ export function Header({ onReset, onPrint, onShare, onLang }: Props) {
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-5 py-3 sm:px-8 sm:py-4">
         <div className="flex flex-col items-start gap-1">
           <Image src={`${BASE_PATH}/logo.png`} alt={`${COMPANY} miniBar`} width={2685} height={729} priority className="h-9 w-auto shrink-0 sm:h-11" />
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy sm:text-xs">{s.tagline}</span>
+          <span className="hidden text-xs font-semibold uppercase tracking-[0.2em] text-navy sm:block">{s.tagline}</span>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <Segmented<Lang>

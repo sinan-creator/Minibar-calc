@@ -70,14 +70,17 @@ function TechCard({
 
   return (
     <article
-      className={`flex flex-col rounded-3xl p-6 sm:p-7 ${
+      // Subgrid: every section (photo, header, each spec row, total, footer) shares one row track across the
+      // three cards, so "Annual energy" sits at the same height in all of them. Row spacing comes from the
+      // parent grid's gap-4; margins below only top it up. 11 = figure + header + 7 rows + total + footer.
+      className={`grid grid-rows-subgrid row-span-11 rounded-3xl p-6 sm:p-7 ${
         isHero
           ? "bg-navy text-white shadow-[0_30px_60px_-24px_rgba(11,31,58,0.6)]"
           : `border bg-white ${selected ? "border-accent/60" : "border-line"}`
       }`}
     >
       {image && (
-        <figure className="mb-5 overflow-hidden rounded-2xl bg-mist">
+        <figure className="mb-1 overflow-hidden rounded-2xl bg-mist">
           <Image
             src={`${BASE_PATH}${image}`}
             alt={`${name} · ${s.rearView}`}
@@ -86,12 +89,12 @@ function TechCard({
             sizes="(min-width: 768px) 33vw, 100vw"
             className="aspect-[4/3] h-auto w-full object-cover"
           />
-          <figcaption className={`px-4 py-2 text-[11px] uppercase tracking-[0.14em] ${isHero ? "bg-white/10 text-white/70" : "text-slate-ui"}`}>
+          <figcaption className="px-4 py-2 text-[11px] uppercase tracking-[0.14em] text-slate-ui">
             {s.rearView}
           </figcaption>
         </figure>
       )}
-      <header>
+      <header className="mb-2">
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
           <div className="flex items-center gap-2.5">
             <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: TECH_COLORS[r.tech.id] }} />
@@ -117,7 +120,7 @@ function TechCard({
         <p className={`mt-2 text-sm leading-relaxed ${isHero ? "text-white/70" : "text-slate-ui"}`}>{s.blurbs[r.tech.id]}</p>
       </header>
 
-      <dl className="my-6 space-y-4">
+      <dl className="contents">
         <Row label={s.cooling} value={facts.principle} small />
         <Row label={s.noiseLevel} value={facts.noise} small />
         <Row label={s.coolingPerformance} value={facts.performance} small />
@@ -127,7 +130,7 @@ function TechCard({
         <Row label={s.annualElectricityCost} value={f.money(r.annualCost, currency)} />
       </dl>
 
-      <div className={`mt-auto border-t pt-5 ${isHero ? "border-white/15" : "border-line"}`}>
+      <div className={`mt-2 border-t pt-5 ${isHero ? "border-white/15" : "border-line"}`}>
         <div className={`text-[11px] font-semibold uppercase tracking-[0.16em] ${isHero ? "text-white/60" : "text-slate-ui"}`}>
           {s.totalCostOver(yearsLabel)}
         </div>
@@ -135,7 +138,7 @@ function TechCard({
       </div>
 
       {cmp && (
-        <footer className={`mt-6 rounded-2xl p-4 ${isHero ? "bg-white/10" : "bg-accent-soft text-navy"}`}>
+        <footer className={`mt-2 rounded-2xl p-4 ${isHero ? "bg-white/10" : "bg-accent-soft text-navy"}`}>
           <div className={`text-[11px] font-semibold uppercase tracking-[0.16em] ${isHero ? "text-white/60" : "text-accent"}`}>
             {isHero ? s.comparedWithTech(techName(cmp.competitor.tech, lang)) : s.switchTo(techName(hero.tech, lang))}
           </div>
@@ -152,11 +155,20 @@ function TechCard({
 }
 
 function Row({ label, value, sub, small }: { label: string; value: string; sub?: string; small?: boolean }) {
+  if (small) {
+    // Free-text facts: label above value, so long Turkish phrases take two lines instead of five.
+    return (
+      <div>
+        <dt className="text-xs opacity-70">{label}</dt>
+        <dd className="mt-0.5 text-sm font-semibold leading-snug">{value}</dd>
+      </div>
+    );
+  }
   return (
     <div className="flex items-baseline justify-between gap-4">
       <dt className="shrink-0 text-sm opacity-70">{label}</dt>
       <dd className="text-right">
-        <div className={`num font-semibold ${small ? "text-sm" : "text-base"}`}>{value}</div>
+        <div className="num text-base font-semibold">{value}</div>
         {sub && <div className="num text-xs opacity-60">{sub}</div>}
       </dd>
     </div>
