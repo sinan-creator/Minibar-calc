@@ -475,6 +475,7 @@ const SOURCE_PHRASES_TR: ReadonlyArray<readonly [string, string]> = [
     "Desk estimate from EPDK regulated business (ticarethane) tariff, single-rate, above 900 kWh/month, incl. taxes (April 2026)",
     "EPDK düzenlemeli ticarethane tarifesinden masa başı tahmin: tek zamanlı, 900 kWh/ay üzeri, vergiler dahil (Nisan 2026)",
   ],
+  ["Desk estimate from EgyptERA commercial tariff, above 1,000 kWh/month (April 2026)", "EgyptERA ticari tarifesinden masa başı tahmin: 1.000 kWh/ay üzeri (Nisan 2026)"],
   ["Desk estimate, 2026 market rate (volatile: confirm daily)", "Masa başı tahmin, 2026 piyasa kuru (oynak: günlük teyit edin)"],
   ["Desk estimate, 2025 market rate (volatile: confirm daily)", "Masa başı tahmin, 2025 piyasa kuru (oynak: günlük teyit edin)"],
   ["Desk estimate, 2025 market average (volatile)", "Masa başı tahmin, 2025 piyasa ortalaması (oynak)"],

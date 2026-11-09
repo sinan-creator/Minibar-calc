@@ -31,7 +31,7 @@ const EUROSTAT = "Desk estimate from Eurostat non-household electricity prices i
 /** Keyed by ISO 3166-1 alpha-2 country code. */
 export const TARIFF_ESTIMATES: Record<string, TariffEstimate> = {
   TR: { value: 7.3, currency: "TRY", year: 2026, source: "Desk estimate from EPDK regulated business (ticarethane) tariff, single-rate, above 900 kWh/month, incl. taxes (April 2026)" },
-  EG: { value: 1.85, currency: "EGP", year: 2025, source: "Desk estimate from EgyptERA commercial tariff bands" },
+  EG: { value: 2.79, currency: "EGP", year: 2026, source: "Desk estimate from EgyptERA commercial tariff, above 1,000 kWh/month (April 2026)" },
   SA: { value: 0.3, currency: "SAR", year: 2025, source: "Desk estimate from Saudi Electricity Company commercial tariff (>6,000 kWh/month)" },
   AE: { value: 0.38, currency: "AED", year: 2025, source: "Desk estimate from DEWA commercial slab tariff incl. fuel surcharge" },
   QA: { value: 0.15, currency: "QAR", year: 2025, source: "Desk estimate from Kahramaa non-residential tariff" },
@@ -86,7 +86,7 @@ export const FX_REFERENCE: Record<string, FxReference> = {
   GBP: { rate: 0.76, year: 2025, source: "Desk estimate, 2025 market average" },
   CHF: { rate: 0.8, year: 2025, source: "Desk estimate, 2025 market average" },
   TRY: { rate: 50, year: 2026, source: "Desk estimate, 2026 market rate (volatile: confirm daily)" },
-  EGP: { rate: 48, year: 2025, source: "Desk estimate, 2025 market rate (volatile: confirm daily)" },
+  EGP: { rate: 55, year: 2026, source: "Desk estimate, 2026 market rate (volatile: confirm daily)" },
   SAR: { rate: 3.75, year: 2025, source: "Official USD peg", pegged: true },
   AED: { rate: 3.6725, year: 2025, source: "Official USD peg", pegged: true },
   QAR: { rate: 3.64, year: 2025, source: "Official USD peg", pegged: true },
