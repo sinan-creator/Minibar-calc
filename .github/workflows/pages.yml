@@ -25,8 +25,7 @@ jobs:
       - run: npm run check
       - run: npm run build
         env:
-          NEXT_PUBLIC_BASE_PATH: /Minibar-calc
-          NEXT_PUBLIC_PUBLIC_URL: https://sinan-creator.github.io/Minibar-calc
+          NEXT_PUBLIC_PUBLIC_URL: https://calculator.elektromarla.com
           # Same Google Tag Manager container as www.elektromarla.com; set NEXT_PUBLIC_GA_ID instead for a dedicated GA4 stream.
           NEXT_PUBLIC_GTM_ID: GTM-K785GZH
       - uses: actions/upload-pages-artifact@v3

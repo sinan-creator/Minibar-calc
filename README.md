@@ -6,7 +6,7 @@ annual electricity savings, cumulative savings, break-even and payback for the I
 
 Fully static (Next.js `output: "export"`), no backend, no database, works offline as a PWA.
 
-**Live:** https://sinan-creator.github.io/Minibar-calc/ (deployed by GitHub Actions on every push to `main`).
+**Live:** https://calculator.elektromarla.com/ (deployed by GitHub Actions on every push to `main`).
 
 ## Run
 

@@ -9,7 +9,7 @@ import { formatters, strings, techName, type Lang } from "../src/lib/i18n.ts";
 
 const ROOMS = 100;
 const YEARS = 10;
-const LIVE_URL = "https://sinan-creator.github.io/Minibar-calc/";
+const LIVE_URL = "https://calculator.elektromarla.com/";
 
 interface Variant {
   lang: Lang;
