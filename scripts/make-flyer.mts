@@ -131,6 +131,8 @@ function render(v: Variant): string {
   const vsAbs = result.comparisons.find((c) => c.competitor.tech.id === "absorption")!;
   const vsPel = result.comparisons.find((c) => c.competitor.tech.id === "peltier")!;
   const money = (n: number) => f.money(n, v.currency);
+  // Minibars are priced in USD everywhere; local-currency variants show the USD price with the converted amount beside it.
+  const usdMoney = (usd: number) => (v.currency === "USD" ? money(usd) : `${f.money(usd, "USD")} <small>≈ ${money(usd * v.fx)}</small>`);
   const roomsLabel = f.number(ROOMS);
   const yearsLabel = f.years(YEARS);
   const maxKwh = Math.max(...result.results.map((r) => r.tech.dailyKwh * 365));
@@ -153,8 +155,8 @@ function render(v: Variant): string {
             <div><dt>${esc(s.noiseLevel)}</dt><dd>${esc(facts.noise)}</dd></div>
             <div><dt>${esc(t.consumption)}</dt><dd>${f.number(r.tech.dailyKwh, 3)} ${t.perDay}</dd></div>
             <div><dt>${esc(t.annualElectricity)}</dt><dd>${money(r.annualCost)}</dd></div>
-            <div><dt>${esc(t.priceUnit)}</dt><dd>${money(r.tech.unitPriceUsd * v.fx)}</dd></div>
-            <div><dt>${esc(t.investment)}</dt><dd>${money(r.investment)}</dd></div>
+            <div><dt>${esc(t.priceUnit)}</dt><dd>${usdMoney(r.tech.unitPriceUsd)}</dd></div>
+            <div><dt>${esc(t.investment)}</dt><dd>${usdMoney(r.investmentUsd)}</dd></div>
           </dl>
           <div class="total"><span>${esc(t.total(yearsLabel))}</span><strong>${money(r.totalCost)}</strong></div>
         </div>
@@ -216,6 +218,7 @@ function render(v: Variant): string {
   dl div { display: flex; justify-content: space-between; gap: 2mm; font-size: 7.6pt; }
   dt { color: #5f6b7a; } .hero dt { color: rgba(255,255,255,.7); }
   dd { margin: 0; font-weight: 600; text-align: right; }
+  dd small { font-weight: 500; font-size: 6.4pt; color: #5f6b7a; } .hero dd small { color: rgba(255,255,255,.7); }
   .total { margin-top: auto; padding-top: 2.4mm; border-top: 1px solid #e3e8ef; display: flex; flex-direction: column; gap: .4mm; }
   .hero .total { border-color: rgba(255,255,255,.2); }
   .total span { font-size: 6.6pt; letter-spacing: .14em; text-transform: uppercase; color: #5f6b7a; }
