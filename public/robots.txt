@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://calculator.elektromarla.com/sitemap.xml
