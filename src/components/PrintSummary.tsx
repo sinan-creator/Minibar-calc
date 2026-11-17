@@ -8,6 +8,7 @@ import { BASE_PATH, COMPANY, CONTACT, HERO_ID, type MinibarSettings } from "@/li
 import { localizeSource, techName } from "@/lib/i18n";
 import type { SalesInputs } from "@/lib/inputs";
 import { fxFor, tariffFor } from "@/lib/tariffs";
+import { ConsumptionPrintPage } from "./ConsumptionPeriods";
 import { useI18n } from "./I18nProvider";
 
 interface Props {
@@ -183,6 +184,13 @@ export function PrintSummary({ inputs, country, currency, result, comparison, se
         </p>
         {s.disclaimer}
       </footer>
+
+      {/* Page 2: the day / month / year electricity bill chart. */}
+      {result && (
+        <div className="break-before-page">
+          <ConsumptionPrintPage result={result} currency={currency} rooms={Number(inputs.rooms)} days={inputs.days} />
+        </div>
+      )}
     </div>
   );
 }

@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import type { CalcResult } from "@/lib/calc";
-import { HERO_ID, type TechnologyId } from "@/lib/defaults";
+import { BASE_PATH, COMPANY, CONTACT, HERO_ID, type TechnologyId } from "@/lib/defaults";
 import { techName } from "@/lib/i18n";
+import { dayCount } from "@/lib/inputs";
 import { useI18n } from "./I18nProvider";
 import { Button, Panel, TECH_COLORS, shortName } from "./ui";
 
@@ -24,6 +26,10 @@ interface Props {
   result: CalcResult | null;
   currency: string;
   rooms: number;
+  /** Day counts of the three cards (raw text). */
+  days: [string, string, string];
+  /** Makes the day counts editable (screen only). */
+  onDaysChange?: (days: [string, string, string]) => void;
   /** Shows a button that prints (saves as PDF) just this chart. */
   onPdf?: () => void;
 }
@@ -32,37 +38,62 @@ interface Props {
  * The electricity bill per day, month and year as three bar cards a buyer reads at a glance:
  * every bar carries its amount and kWh, and each card ends with what the hero saves against each competitor.
  */
-export function ConsumptionPeriods({ result, currency, rooms, onPdf }: Props) {
+export function ConsumptionPeriods({ result, currency, rooms, days, onDaysChange, onPdf }: Props) {
   const { s, f, lang } = useI18n();
   if (!result) return null;
 
-  // Annual figures scaled down; a month is 1/12 of the year (≈30.4 days).
-  const periods = [
-    { label: s.oneDay, k: 1 / 365 },
-    { label: s.oneMonth, k: 1 / 12 },
-    { label: s.oneYear, k: 1 },
-  ];
+  // Annual figures scaled to each card's day count. 30 days reads as "1 month" (1/12 of the year,
+  // ≈30.4 days) and 365 as "1 year"; any other count is shown as days. Invalid entries drop their card.
+  const periods = days.flatMap((d, i) => {
+    const n = dayCount(d);
+    if (n === null) return [];
+    if (n === 30) return [{ key: i, label: s.oneMonth, k: 1 / 12 }];
+    if (n === 365) return [{ key: i, label: s.oneYear, k: 1 }];
+    return [{ key: i, label: s.nDays(f.number(n)), k: n / 365 }];
+  });
   const kwh = (v: number) => `${f.number(v, v < 100 ? 1 : 0)} kWh`;
   const money = (v: number) => f.money(v, currency, { digits: Math.abs(v) < 100 ? 2 : 0 });
   const max = Math.max(...result.results.map((r) => r.annualCost), 1e-9);
   const savings = result.comparisons.filter((c) => c.annualSavings > 0);
 
   return (
-    <Panel title={s.consumptionTitle} subtitle={s.consumptionSubtitle(s.roomsCount(f.number(rooms)))}>
+    <Panel title={s.consumptionTitle(periods.map((p) => p.label).join(", "))} subtitle={s.consumptionSubtitle(s.roomsCount(f.number(rooms)))}>
+      {onDaysChange && (
+        <div className="mt-4 flex flex-wrap items-center gap-2 print:hidden">
+          <span className="text-sm font-medium text-slate-ui">{s.daysLabel}</span>
+          {days.map((d, i) => (
+            <input
+              key={i}
+              className="input h-10 w-24 text-center"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              aria-label={s.periodN(i + 1)}
+              aria-invalid={dayCount(d) === null}
+              value={d}
+              onChange={(e) => {
+                const next: [string, string, string] = [...days];
+                next[i] = e.target.value.replace(/[^\d]/g, "").slice(0, 4);
+                onDaysChange(next);
+              }}
+            />
+          ))}
+        </div>
+      )}
       <div className="mt-6 grid gap-4 md:grid-cols-3 print:grid-cols-3">
         {periods.map((p) => (
-          <div key={p.label} className="flex flex-col rounded-2xl border border-line p-5 print:p-4">
+          <div key={p.key} className="flex flex-col rounded-2xl border border-line p-5 print:p-4">
             <div className="text-center text-2xl font-bold uppercase tracking-wide text-navy">{p.label}</div>
 
-            <div className="mt-5 flex-1 space-y-4">
+            <div className="mt-5 space-y-4">
               {result.results.map((r) => {
                 const isHero = r.tech.id === HERO_ID;
                 const cost = r.annualCost * p.k;
                 return (
                   <div key={r.tech.id} title={`${techName(r.tech, lang)}: ${money(cost)} · ${kwh(r.annualKwh * p.k)}`}>
-                    <div className="flex flex-wrap items-baseline justify-between gap-x-2">
+                    {/* Label and amount always on separate lines, so rows line up across the three cards. */}
+                    <div className="flex flex-col">
                       <span className={`text-sm ${isHero ? "font-semibold text-navy" : "text-slate-ui"}`}>{shortName(techName(r.tech, lang))}</span>
-                      <span className={`num ml-auto text-xl font-bold tracking-tight print:text-lg ${isHero ? "text-navy" : "text-ink"}`}>
+                      <span className={`num self-end text-xl font-bold tracking-tight print:text-lg ${isHero ? "text-navy" : "text-ink"}`}>
                         {money(cost)}
                       </span>
                     </div>
@@ -102,5 +133,18 @@ export function ConsumptionPeriods({ result, currency, rooms, onPdf }: Props) {
         </div>
       )}
     </Panel>
+  );
+}
+
+/** The chart as a printed A4 page: logo, chart, contact line. Used for the chart-only PDF and as page 2 of the summary. */
+export function ConsumptionPrintPage({ result, currency, rooms, days }: Omit<Props, "onPdf" | "onDaysChange">) {
+  return (
+    <div>
+      <Image src={`${BASE_PATH}/logo.png`} alt={COMPANY} width={2685} height={729} className="mb-4 h-12 w-auto" />
+      <ConsumptionPeriods result={result} currency={currency} rooms={rooms} days={days} />
+      <p className="mt-4 text-center text-xs font-medium text-navy">
+        {COMPANY} · {CONTACT.phone} · {CONTACT.email} · {CONTACT.website.replace(/^https?:\/\//, "")}
+      </p>
+    </div>
   );
 }

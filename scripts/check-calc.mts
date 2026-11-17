@@ -66,5 +66,10 @@ assert.ok(heroOff.ok && heroOff.value.technologies.find((t) => t.id === "inverte
 const sample = { ...initialInputs("DE"), rooms: "150", tariff: "0,31", tariffKind: "manual" as const, years: 10 as const, mode: "peltier" as const };
 assert.deepEqual(fromSearchParams(`?${toSearchParams(sample).toString()}`), sample, "inputs survive the URL round trip");
 assert.deepEqual(fromSearchParams("?c=ZZ&r=abc&y=7"), initialInputs(), "garbage parameters fall back to defaults");
+const seasonal = { ...initialInputs(), days: ["1", "100", "220"] as [string, string, string] };
+assert.equal(toSearchParams(seasonal).get("p"), "1,100,220", "custom day counts go into the URL");
+assert.deepEqual(fromSearchParams(`?${toSearchParams(seasonal).toString()}`), seasonal, "day counts survive the URL round trip");
+assert.equal(toSearchParams(initialInputs()).get("p"), null, "default day counts stay out of the URL");
+assert.deepEqual(fromSearchParams("?p=1,0,99999").days, initialInputs().days, "invalid day counts fall back to defaults");
 
 console.log("check-calc: all assertions passed");

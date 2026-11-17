@@ -1,12 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { flushSync } from "react-dom";
 import { track } from "@/lib/analytics";
 import { calculate, toUsdResult } from "@/lib/calc";
 import { findCountry } from "@/lib/countries";
-import { ATTRACT_IDLE_MS, BASE_PATH, COMPANY, CONTACT, DEFAULT_COUNTRY, MIN_CHART_YEARS } from "@/lib/defaults";
+import { ATTRACT_IDLE_MS, DEFAULT_COUNTRY, MIN_CHART_YEARS } from "@/lib/defaults";
 import { isLang, setLang, strings, useStoredLang, type Lang } from "@/lib/i18n";
 import { fromSearchParams, initialInputs, marketDefaults, parseDecimal, toSearchParams, validateInputs, type SalesInputs } from "@/lib/inputs";
 import { useSettings } from "@/lib/settings";
@@ -14,7 +13,7 @@ import { AdminPanel } from "./AdminPanel";
 import { AttractMode } from "./AttractMode";
 import { CumulativeChart, OwnershipBarChart } from "./Charts";
 import { ComparisonTable } from "./ComparisonTable";
-import { ConsumptionPeriods } from "./ConsumptionPeriods";
+import { ConsumptionPeriods, ConsumptionPrintPage } from "./ConsumptionPeriods";
 import { EnergySaved } from "./EnergySaved";
 import { Header } from "./Header";
 import { Headline } from "./Headline";
@@ -142,7 +141,14 @@ export function Calculator() {
               <TechCards result={result} comparison={comparison} currency={displayCurrency} years={inputs.years} fxRate={displayFx} />
               <Recommendation result={result} comparison={comparison} years={inputs.years} />
               <EnergySaved comparison={comparison} years={inputs.years} />
-              <ConsumptionPeriods result={result} currency={displayCurrency} rooms={numeric.rooms} onPdf={printConsumption} />
+              <ConsumptionPeriods
+                result={result}
+                currency={displayCurrency}
+                rooms={numeric.rooms}
+                days={inputs.days}
+                onDaysChange={(days) => update({ days })}
+                onPdf={printConsumption}
+              />
               <div className="grid gap-6 2xl:grid-cols-2">
                 <OwnershipBarChart result={result} comparison={comparison} currency={displayCurrency} years={inputs.years} />
                 <CumulativeChart result={result} comparison={comparison} currency={displayCurrency} years={inputs.years} />
@@ -186,11 +192,7 @@ export function Calculator() {
 
       {printChart ? (
         <div className="hidden print:block">
-          <Image src={`${BASE_PATH}/logo.png`} alt={COMPANY} width={2685} height={729} className="mb-4 h-12 w-auto" />
-          <ConsumptionPeriods result={result} currency={displayCurrency} rooms={numeric.rooms} />
-          <p className="mt-4 text-center text-xs font-medium text-navy">
-            {COMPANY} · {CONTACT.phone} · {CONTACT.email} · {CONTACT.website.replace(/^https?:\/\//, "")}
-          </p>
+          <ConsumptionPrintPage result={result} currency={displayCurrency} rooms={numeric.rooms} days={inputs.days} />
         </div>
       ) : (
         <PrintSummary

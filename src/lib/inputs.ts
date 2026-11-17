@@ -15,6 +15,8 @@ export interface SalesInputs {
   mode: TechnologyId;
   /** Show money in the local currency or converted to USD. */
   display: "local" | "usd";
+  /** Day counts of the three bill-chart cards, raw text. 30 reads as "1 month", 365 as "1 year". */
+  days: [string, string, string];
 }
 
 /** Error codes; the UI maps them to the active language. */
@@ -48,6 +50,7 @@ export function initialInputs(countryCode = DEFAULT_COUNTRY): SalesInputs {
     years: DEFAULT_YEARS,
     mode: "absorption",
     display: "local",
+    days: [...DEFAULT_DAYS],
   };
 }
 
@@ -79,10 +82,25 @@ export function toSearchParams(i: SalesInputs): URLSearchParams {
   p.set("y", String(i.years));
   p.set("m", i.mode);
   if (i.display === "usd") p.set("d", "usd");
+  if (i.days.join() !== DEFAULT_DAYS.join()) p.set("p", i.days.join());
   return p;
 }
 
 const MODES: readonly TechnologyId[] = ["absorption", "peltier"];
+
+export const DEFAULT_DAYS: readonly [string, string, string] = ["1", "30", "365"];
+export const DAY_LIMITS = { min: 1, max: 3650 } as const;
+
+/** A valid day count, or null. */
+export function dayCount(s: string): number | null {
+  const n = Number(s);
+  return s.trim() && Number.isInteger(n) && n >= DAY_LIMITS.min && n <= DAY_LIMITS.max ? n : null;
+}
+
+function parseDays(v: string | null): [string, string, string] | null {
+  const parts = v?.split(",") ?? [];
+  return parts.length === 3 && parts.every((d) => dayCount(d) !== null) ? [parts[0], parts[1], parts[2]] : null;
+}
 
 /** Restores inputs from a query string; anything missing or malformed falls back to the market defaults. */
 export function fromSearchParams(search: string): SalesInputs {
@@ -105,5 +123,6 @@ export function fromSearchParams(search: string): SalesInputs {
     years: (PERIOD_OPTIONS as readonly number[]).includes(years) ? (years as PeriodYears) : base.years,
     mode: mode && MODES.includes(mode) ? mode : base.mode,
     display: p.get("d") === "usd" ? "usd" : "local",
+    days: parseDays(p.get("p")) ?? base.days,
   };
 }
