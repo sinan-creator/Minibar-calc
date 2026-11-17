@@ -12,6 +12,7 @@ import { AdminPanel } from "./AdminPanel";
 import { AttractMode } from "./AttractMode";
 import { CumulativeChart, OwnershipBarChart } from "./Charts";
 import { ComparisonTable } from "./ComparisonTable";
+import { ConsumptionPeriods } from "./ConsumptionPeriods";
 import { EnergySaved } from "./EnergySaved";
 import { Header } from "./Header";
 import { Headline } from "./Headline";
@@ -119,6 +120,7 @@ export function Calculator() {
               <TechCards result={result} comparison={comparison} currency={displayCurrency} years={inputs.years} fxRate={displayFx} />
               <Recommendation result={result} comparison={comparison} years={inputs.years} />
               <EnergySaved comparison={comparison} years={inputs.years} />
+              <ConsumptionPeriods result={result} comparison={comparison} currency={displayCurrency} rooms={numeric.rooms} />
               <div className="grid gap-6 2xl:grid-cols-2">
                 <OwnershipBarChart result={result} comparison={comparison} currency={displayCurrency} years={inputs.years} />
                 <CumulativeChart result={result} comparison={comparison} currency={displayCurrency} years={inputs.years} />
