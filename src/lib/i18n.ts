@@ -134,6 +134,7 @@ const en = {
   oneYear: "1 year",
   heroSavesVs: (hero: string, other: string) => `You save with ${hero} instead of ${other}`,
   lessKwh: (kwh: string) => `${kwh} less electricity`,
+  savePdf: "Save this chart as PDF",
   // energy saved
   switchingFrom: (name: string) => `Switching from ${name}`,
   lessElectricity: "less electricity every year",
@@ -353,6 +354,7 @@ const tr: Strings = {
   oneYear: "1 yıl",
   heroSavesVs: (hero, other) => `${other} yerine ${hero} ile cebinizde kalan`,
   lessKwh: (kwh) => `${kwh} daha az elektrik`,
+  savePdf: "Bu grafiği PDF olarak kaydet",
   switchingFrom: (name) => `${name} yerine`,
   lessElectricity: "her yıl daha az elektrik",
   over: (years) => `${years} boyunca`,
