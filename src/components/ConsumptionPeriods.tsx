@@ -1,14 +1,27 @@
 "use client";
 
-import type { CalcResult, Comparison } from "@/lib/calc";
-import { HERO_ID } from "@/lib/defaults";
+import type { CalcResult } from "@/lib/calc";
+import { HERO_ID, type TechnologyId } from "@/lib/defaults";
 import { techName } from "@/lib/i18n";
 import { useI18n } from "./I18nProvider";
 import { Button, Panel, TECH_COLORS, shortName } from "./ui";
 
+/** Savings box colours per competitor: green against Absorption, light blue against Peltier. */
+const SAVING_TONES: Partial<Record<TechnologyId, { box: string; text: string; amount: string }>> = {
+  absorption: {
+    box: "border-emerald-200 bg-emerald-50",
+    text: "text-emerald-900",
+    amount: "text-emerald-800",
+  },
+  peltier: {
+    box: "border-sky-200 bg-sky-50",
+    text: "text-sky-900",
+    amount: "text-sky-800",
+  },
+};
+
 interface Props {
   result: CalcResult | null;
-  comparison: Comparison | null;
   currency: string;
   rooms: number;
   /** Shows a button that prints (saves as PDF) just this chart. */
@@ -17,9 +30,9 @@ interface Props {
 
 /**
  * The electricity bill per day, month and year as three bar cards a buyer reads at a glance:
- * every bar carries its amount and kWh, and each card ends with what the hero saves.
+ * every bar carries its amount and kWh, and each card ends with what the hero saves against each competitor.
  */
-export function ConsumptionPeriods({ result, comparison, currency, rooms, onPdf }: Props) {
+export function ConsumptionPeriods({ result, currency, rooms, onPdf }: Props) {
   const { s, f, lang } = useI18n();
   if (!result) return null;
 
@@ -32,7 +45,7 @@ export function ConsumptionPeriods({ result, comparison, currency, rooms, onPdf 
   const kwh = (v: number) => `${f.number(v, v < 100 ? 1 : 0)} kWh`;
   const money = (v: number) => f.money(v, currency, { digits: Math.abs(v) < 100 ? 2 : 0 });
   const max = Math.max(...result.results.map((r) => r.annualCost), 1e-9);
-  const saving = comparison && comparison.annualSavings > 0 ? comparison : null;
+  const savings = result.comparisons.filter((c) => c.annualSavings > 0);
 
   return (
     <Panel title={s.consumptionTitle} subtitle={s.consumptionSubtitle(s.roomsCount(f.number(rooms)))}>
@@ -47,14 +60,19 @@ export function ConsumptionPeriods({ result, comparison, currency, rooms, onPdf 
                 const cost = r.annualCost * p.k;
                 return (
                   <div key={r.tech.id} title={`${techName(r.tech, lang)}: ${money(cost)} · ${kwh(r.annualKwh * p.k)}`}>
-                    <div className="flex items-baseline justify-between gap-2">
+                    <div className="flex flex-wrap items-baseline justify-between gap-x-2">
                       <span className={`text-sm ${isHero ? "font-semibold text-navy" : "text-slate-ui"}`}>{shortName(techName(r.tech, lang))}</span>
-                      <span className={`num text-xl font-bold tracking-tight print:text-lg ${isHero ? "text-navy" : "text-ink"}`}>{money(cost)}</span>
+                      <span className={`num ml-auto text-xl font-bold tracking-tight print:text-lg ${isHero ? "text-navy" : "text-ink"}`}>
+                        {money(cost)}
+                      </span>
                     </div>
                     <div className="mt-1 h-5 w-full rounded bg-mist">
                       <div
                         className="h-full rounded transition-[width] duration-500 ease-out"
-                        style={{ width: `${Math.max((r.annualCost / max) * 100, 1.5)}%`, background: TECH_COLORS[r.tech.id] }}
+                        style={{
+                          width: `${Math.max((r.annualCost / max) * 100, 1.5)}%`,
+                          background: TECH_COLORS[r.tech.id],
+                        }}
                       />
                     </div>
                     <div className="num mt-0.5 text-right text-xs text-slate-ui">{kwh(r.annualKwh * p.k)}</div>
@@ -63,15 +81,18 @@ export function ConsumptionPeriods({ result, comparison, currency, rooms, onPdf 
               })}
             </div>
 
-            {saving && (
-              <div className="mt-5 rounded-xl bg-accent-soft px-4 py-3 text-center">
-                <div className="text-xs font-medium text-slate-ui">
-                  {s.heroSavesVs(shortName(techName(result.hero.tech, lang)), shortName(techName(saving.competitor.tech, lang)))}
+            {savings.map((c, i) => {
+              const tone = SAVING_TONES[c.competitor.tech.id] ?? SAVING_TONES.absorption!;
+              return (
+                <div key={c.competitor.tech.id} className={`${i === 0 ? "mt-5" : "mt-3"} rounded-xl border px-4 py-3 text-center ${tone.box}`}>
+                  <div className={`text-xs font-medium ${tone.text}`}>
+                    {s.heroSavesVs(shortName(techName(result.hero.tech, lang)), shortName(techName(c.competitor.tech, lang)))}
+                  </div>
+                  <div className={`num mt-0.5 text-2xl font-bold tracking-tight ${tone.amount}`}>{money(c.annualSavings * p.k)}</div>
+                  <div className={`num text-xs ${tone.text}`}>{s.lessKwh(kwh(c.annualEnergySavedKwh * p.k))}</div>
                 </div>
-                <div className="num mt-0.5 text-2xl font-bold tracking-tight text-navy">{money(saving.annualSavings * p.k)}</div>
-                <div className="num text-xs text-slate-ui">{s.lessKwh(kwh(saving.annualEnergySavedKwh * p.k))}</div>
-              </div>
-            )}
+              );
+            })}
           </div>
         ))}
       </div>

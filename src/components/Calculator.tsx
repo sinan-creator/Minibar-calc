@@ -27,6 +27,7 @@ import { ShareQr } from "./ShareQr";
 import { TechCards } from "./TechCards";
 
 const subscribeNever = () => () => {};
+const KIOSK_KEY = "elektromarla.minibar.kiosk";
 const readSearch = () => window.location.search;
 
 export function Calculator() {
@@ -54,11 +55,17 @@ export function Calculator() {
     window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
   }, [edited, storedLang, inputs, lang]);
 
-  // Exhibition attract mode after a period of no interaction (or on demand with ?attract=1 to preview it).
+  // Exhibition attract mode after a period of no interaction, only on the stand device.
+  // Opening ?kiosk=1 once marks this device as the stand (?kiosk=0 undoes it); customer links open
+  // straight on the calculator. ?attract=1 previews the screen once.
   const [idle, setIdle] = useState(false);
   const [previewDismissed, setPreviewDismissed] = useState(false);
   const showAttract = idle || (!previewDismissed && new URLSearchParams(search).get("attract") === "1");
   useEffect(() => {
+    const flag = new URLSearchParams(search).get("kiosk");
+    if (flag === "1") localStorage.setItem(KIOSK_KEY, "1");
+    if (flag === "0") localStorage.removeItem(KIOSK_KEY);
+    if (localStorage.getItem(KIOSK_KEY) !== "1") return;
     let timer = window.setTimeout(() => setIdle(true), ATTRACT_IDLE_MS);
     const bump = () => {
       window.clearTimeout(timer);
@@ -70,7 +77,7 @@ export function Calculator() {
       window.clearTimeout(timer);
       for (const e of events) window.removeEventListener(e, bump);
     };
-  }, []);
+  }, [search]);
 
   const [shareOpen, setShareOpen] = useState(false);
 
@@ -135,7 +142,7 @@ export function Calculator() {
               <TechCards result={result} comparison={comparison} currency={displayCurrency} years={inputs.years} fxRate={displayFx} />
               <Recommendation result={result} comparison={comparison} years={inputs.years} />
               <EnergySaved comparison={comparison} years={inputs.years} />
-              <ConsumptionPeriods result={result} comparison={comparison} currency={displayCurrency} rooms={numeric.rooms} onPdf={printConsumption} />
+              <ConsumptionPeriods result={result} currency={displayCurrency} rooms={numeric.rooms} onPdf={printConsumption} />
               <div className="grid gap-6 2xl:grid-cols-2">
                 <OwnershipBarChart result={result} comparison={comparison} currency={displayCurrency} years={inputs.years} />
                 <CumulativeChart result={result} comparison={comparison} currency={displayCurrency} years={inputs.years} />
@@ -180,7 +187,7 @@ export function Calculator() {
       {printChart ? (
         <div className="hidden print:block">
           <Image src={`${BASE_PATH}/logo.png`} alt={COMPANY} width={2685} height={729} className="mb-4 h-12 w-auto" />
-          <ConsumptionPeriods result={result} comparison={comparison} currency={displayCurrency} rooms={numeric.rooms} />
+          <ConsumptionPeriods result={result} currency={displayCurrency} rooms={numeric.rooms} />
           <p className="mt-4 text-center text-xs font-medium text-navy">
             {COMPANY} · {CONTACT.phone} · {CONTACT.email} · {CONTACT.website.replace(/^https?:\/\//, "")}
           </p>

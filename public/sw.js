@@ -1,7 +1,7 @@
 /* Elektromarla Minibar Savings Calculator – offline cache for the static export.
  * Works at a domain root or in a sub-folder: paths derive from the registration scope.
  * Bump CACHE on each deploy; activate() purges older caches. */
-const CACHE = "elektromarla-minibar-v5";
+const CACHE = "elektromarla-minibar-v6";
 const BASE = new URL(self.registration.scope).pathname.replace(/\/$/, ""); // "" or "/Minibar-calc"
 const SHELL = [
   "/",
