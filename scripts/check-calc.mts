@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { calculate } from "../src/lib/calc.ts";
 import { DEFAULT_SETTINGS } from "../src/lib/defaults.ts";
-import { fromSearchParams, initialInputs, toSearchParams } from "../src/lib/inputs.ts";
+import { fromSearchParams, initialInputs, toSearchParams, validateInputs } from "../src/lib/inputs.ts";
 import { validateSettings } from "../src/lib/settings.ts";
 
 const close = (a: number, b: number, msg: string) => assert.ok(Math.abs(a - b) < 1e-6, `${msg}: ${a} vs ${b}`);
@@ -70,6 +70,19 @@ const seasonal = { ...initialInputs(), days: ["1", "100", "220"] as [string, str
 assert.equal(toSearchParams(seasonal).get("p"), "1,100,220", "custom day counts go into the URL");
 assert.deepEqual(fromSearchParams(`?${toSearchParams(seasonal).toString()}`), seasonal, "day counts survive the URL round trip");
 assert.equal(toSearchParams(initialInputs()).get("p"), null, "default day counts stay out of the URL");
+
+// Seasonal hotel: annual figures count only open days, so savings shrink and payback grows by 365/220.
+const yearRound = calculate(DEFAULT_SETTINGS, { rooms: 200, tariff: 7.3, fxRate: 50, years: 10 });
+const season220 = calculate(DEFAULT_SETTINGS, { rooms: 200, tariff: 7.3, fxRate: 50, years: 10, operatingDays: 220 });
+close(season220.hero.annualKwh, 0.13 * 220 * 200, "inverter kWh over a 220-day season");
+close(season220.comparisons[0].annualSavings, yearRound.comparisons[0].annualSavings * (220 / 365), "savings scale with the season");
+close(season220.comparisons[0].paybackMonths!, yearRound.comparisons[0].paybackMonths! * (365 / 220), "payback grows with a shorter season");
+const seasonal220 = { ...initialInputs(), season: "220" };
+assert.equal(toSearchParams(seasonal220).get("o"), "220", "season goes into the URL");
+assert.deepEqual(fromSearchParams(`?${toSearchParams(seasonal220).toString()}`), seasonal220, "season survives the URL round trip");
+assert.equal(toSearchParams(initialInputs()).get("o"), null, "year-round season stays out of the URL");
+assert.equal(fromSearchParams("?o=400").season, "365", "invalid season falls back to 365");
+assert.equal(validateInputs({ ...initialInputs(), season: "0" }).season, "range", "season 0 is rejected");
 assert.deepEqual(fromSearchParams("?p=1,0,99999").days, initialInputs().days, "invalid day counts fall back to defaults");
 
 console.log("check-calc: all assertions passed");

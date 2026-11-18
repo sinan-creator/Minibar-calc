@@ -102,6 +102,7 @@ export function Calculator() {
     tariff: parseDecimal(inputs.tariff),
     fxRate: parseDecimal(inputs.fxRate),
     years: inputs.years,
+    operatingDays: Number(inputs.season),
   };
 
   const localResult = valid ? calculate(settings, numeric, MIN_CHART_YEARS) : null;
@@ -130,7 +131,7 @@ export function Calculator() {
         <Header onReset={reset} onPrint={() => window.print()} onShare={() => setShareOpen(true)} onLang={setLang} />
 
         <main className="mx-auto w-full max-w-7xl flex-1 px-5 pb-20 sm:px-8">
-          <Headline comparison={comparison} country={country} currency={displayCurrency} rooms={numeric.rooms} />
+          <Headline comparison={comparison} country={country} currency={displayCurrency} rooms={numeric.rooms} season={numeric.operatingDays} />
 
           <div className="mt-10 grid items-start gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
             <aside className="xl:sticky xl:top-28">
@@ -146,6 +147,7 @@ export function Calculator() {
                 currency={displayCurrency}
                 rooms={numeric.rooms}
                 days={inputs.days}
+                season={numeric.operatingDays}
                 onDaysChange={(days) => update({ days })}
                 onPdf={printConsumption}
               />
@@ -192,7 +194,7 @@ export function Calculator() {
 
       {printChart ? (
         <div className="hidden print:block">
-          <ConsumptionPrintPage result={result} currency={displayCurrency} rooms={numeric.rooms} days={inputs.days} />
+          <ConsumptionPrintPage result={result} currency={displayCurrency} rooms={numeric.rooms} days={inputs.days} season={numeric.operatingDays} />
         </div>
       ) : (
         <PrintSummary

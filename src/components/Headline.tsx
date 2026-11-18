@@ -11,9 +11,11 @@ interface Props {
   /** Currency the comparison amounts are expressed in. */
   currency: string;
   rooms: number;
+  /** Days per year the hotel is open; shown when it is a seasonal hotel. */
+  season: number;
 }
 
-export function Headline({ comparison, country, currency, rooms }: Props) {
+export function Headline({ comparison, country, currency, rooms, season }: Props) {
   const { s, f, lang, locale } = useI18n();
   const savingsUsd = comparison ? Math.max(0, comparison.annualSavingsUsd) : null;
 
@@ -33,6 +35,7 @@ export function Headline({ comparison, country, currency, rooms }: Props) {
               </>
             )}
             {s.comparedWith(techName(comparison.competitor.tech, lang))} · {s.roomsCount(f.number(rooms))}
+            {season < 365 && <> · {s.seasonDays(f.number(season))}</>}
           </>
         ) : (
           s.completeDetails

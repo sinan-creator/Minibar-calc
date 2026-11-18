@@ -155,7 +155,7 @@ export function PrintSummary({ inputs, country, currency, result, comparison, se
               }
             />
             <Item label={s.comparisonPeriod} value={yearsLabel} />
-            <Item label={s.operatingDays} value={s.operatingDaysValue} />
+            <Item label={s.operatingDays} value={s.operatingDaysValue(f.number(Number(inputs.season)))} />
           </dl>
         </div>
         <div>
@@ -188,7 +188,7 @@ export function PrintSummary({ inputs, country, currency, result, comparison, se
       {/* Page 2: the day / month / year electricity bill chart. */}
       {result && (
         <div className="break-before-page">
-          <ConsumptionPrintPage result={result} currency={currency} rooms={Number(inputs.rooms)} days={inputs.days} />
+          <ConsumptionPrintPage result={result} currency={currency} rooms={Number(inputs.rooms)} days={inputs.days} season={Number(inputs.season)} />
         </div>
       )}
     </div>

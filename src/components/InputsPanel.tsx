@@ -34,6 +34,7 @@ export function InputsPanel({ inputs, country, errors, onChange, onSelectCountry
     onChange({ rooms: String(Math.min(ROOM_LIMITS.max, Math.max(ROOM_LIMITS.min, rooms + delta))) });
   const errorText = {
     rooms: errors.rooms ? s.errRooms(ROOM_LIMITS.min, f.number(ROOM_LIMITS.max)) : undefined,
+    season: errors.season ? s.errSeason : undefined,
     tariff: errors.tariff === "required" ? s.errTariffRequired : errors.tariff === "positive" ? s.errTariffPositive : undefined,
     fxRate: errors.fxRate === "required" ? s.errFxRequired : errors.fxRate === "positive" ? s.errFxPositive : undefined,
   };
@@ -74,6 +75,22 @@ export function InputsPanel({ inputs, country, errors, onChange, onSelectCountry
               +
             </button>
           </div>
+        </Field>
+
+        <Field label={s.season} htmlFor="season" error={errorText.season}>
+          <div className="relative">
+            <input
+              id="season"
+              className="input pr-24"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              aria-invalid={Boolean(errors.season)}
+              value={inputs.season}
+              onChange={(e) => onChange({ season: e.target.value.replace(/[^\d]/g, "").slice(0, 3) })}
+            />
+            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-ui">{s.seasonUnit}</span>
+          </div>
+          {!errors.season && <p className="mt-2 text-xs text-slate-ui">{s.seasonHint}</p>}
         </Field>
 
         <Field label={s.electricityTariff} htmlFor="tariff" error={errorText.tariff}>

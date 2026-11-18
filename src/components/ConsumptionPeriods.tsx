@@ -28,6 +28,8 @@ interface Props {
   rooms: number;
   /** Day counts of the three cards (raw text). */
   days: [string, string, string];
+  /** Days per year the hotel is open; the annual figures cover exactly these days. */
+  season: number;
   /** Makes the day counts editable (screen only). */
   onDaysChange?: (days: [string, string, string]) => void;
   /** Shows a button that prints (saves as PDF) just this chart. */
@@ -38,7 +40,7 @@ interface Props {
  * The electricity bill per day, month and year as three bar cards a buyer reads at a glance:
  * every bar carries its amount and kWh, and each card ends with what the hero saves against each competitor.
  */
-export function ConsumptionPeriods({ result, currency, rooms, days, onDaysChange, onPdf }: Props) {
+export function ConsumptionPeriods({ result, currency, rooms, days, season, onDaysChange, onPdf }: Props) {
   const { s, f, lang } = useI18n();
   if (!result) return null;
 
@@ -47,9 +49,10 @@ export function ConsumptionPeriods({ result, currency, rooms, days, onDaysChange
   const periods = days.flatMap((d, i) => {
     const n = dayCount(d);
     if (n === null) return [];
-    if (n === 30) return [{ key: i, label: s.oneMonth, k: 1 / 12 }];
-    if (n === 365) return [{ key: i, label: s.oneYear, k: 1 }];
-    return [{ key: i, label: s.nDays(f.number(n)), k: n / 365 }];
+    // Annual figures cover `season` open days; a month is 365/12 open days.
+    if (n === 30) return [{ key: i, label: s.oneMonth, k: 365 / 12 / season }];
+    if (n === 365) return [{ key: i, label: season < 365 ? s.oneSeason(f.number(season)) : s.oneYear, k: 1 }];
+    return [{ key: i, label: s.nDays(f.number(n)), k: n / season }];
   });
   const kwh = (v: number) => `${f.number(v, v < 100 ? 1 : 0)} kWh`;
   const money = (v: number) => f.money(v, currency, { digits: Math.abs(v) < 100 ? 2 : 0 });
@@ -137,11 +140,11 @@ export function ConsumptionPeriods({ result, currency, rooms, days, onDaysChange
 }
 
 /** The chart as a printed A4 page: logo, chart, contact line. Used for the chart-only PDF and as page 2 of the summary. */
-export function ConsumptionPrintPage({ result, currency, rooms, days }: Omit<Props, "onPdf" | "onDaysChange">) {
+export function ConsumptionPrintPage({ result, currency, rooms, days, season }: Omit<Props, "onPdf" | "onDaysChange">) {
   return (
     <div>
       <Image src={`${BASE_PATH}/logo.png`} alt={COMPANY} width={2685} height={729} className="mb-4 h-12 w-auto" />
-      <ConsumptionPeriods result={result} currency={currency} rooms={rooms} days={days} />
+      <ConsumptionPeriods result={result} currency={currency} rooms={rooms} days={days} season={season} />
       <p className="mt-4 text-center text-xs font-medium text-navy">
         {COMPANY} · {CONTACT.phone} · {CONTACT.email} · {CONTACT.website.replace(/^https?:\/\//, "")}
       </p>

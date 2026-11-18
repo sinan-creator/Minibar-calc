@@ -8,6 +8,8 @@ export interface CalcInputs {
   fxRate: number;
   /** Selected comparison period in years. */
   years: number;
+  /** Days per year the hotel is open (seasonal hotels). Defaults to 365. */
+  operatingDays?: number;
 }
 
 /** All money values are in the local currency unless the name says Usd. */
@@ -53,7 +55,7 @@ export const toUsd = (local: number, fxRate: number) => (fxRate > 0 ? local / fx
 
 export function computeTech(tech: Technology, inputs: CalcInputs, chartYears: number): TechResult {
   const rooms = finite(inputs.rooms);
-  const annualKwh = tech.dailyKwh * DAYS_PER_YEAR * rooms;
+  const annualKwh = tech.dailyKwh * finite(inputs.operatingDays ?? DAYS_PER_YEAR) * rooms;
   const annualCost = annualKwh * finite(inputs.tariff);
   const investmentUsd = tech.unitPriceUsd * rooms;
   const investment = investmentUsd * finite(inputs.fxRate);
