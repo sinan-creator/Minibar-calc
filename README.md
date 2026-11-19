@@ -32,7 +32,7 @@ On iPad use Safari → Share → *Add to Home Screen* for a full-screen kiosk ex
 | `src/lib/countries.ts` | ISO 3166 countries → ISO 4217 currency. |
 | `src/lib/calc.ts` | Pure calculation engine (annual energy, costs, savings, payback). |
 | `src/lib/settings.ts` | Administrator settings store (validation, localStorage persistence, JSON import/export). |
-| `src/components/` | UI: inputs, headline, technology cards, charts, admin panel, printable summary. |
+| `src/components/` | UI: inputs, technology cards, charts, admin panel, printable summary. |
 | `scripts/check-calc.mts` | Runnable assertions for the engine and settings validation. |
 
 ### Calculations
@@ -90,7 +90,7 @@ Optional, build-time: `NEXT_PUBLIC_GTM_ID` loads a Google Tag Manager container 
 elektromarla.com container `GTM-K785GZH`, so visits land in the same Google Analytics property as the website);
 `NEXT_PUBLIC_GA_ID` loads GA4 directly instead. Custom events are sent through `track()` in `src/lib/analytics.ts`:
 `country_select`, `qr_open`, `contact_email`, `contact_whatsapp`, `contact_call`, `print_summary`,
-`language_change`, `attract_start`, `reset`. With GTM, add triggers for these dataLayer events to forward them
+`language_change`, `attract_start`, `print_chart`. With GTM, add triggers for these dataLayer events to forward them
 to GA4; with a direct GA4 ID they arrive automatically. EU visitors of the web version need a cookie consent
 banner before analytics may load; the fair kiosk does not.
 

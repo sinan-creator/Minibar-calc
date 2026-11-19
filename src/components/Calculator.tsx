@@ -5,7 +5,7 @@ import { flushSync } from "react-dom";
 import { track } from "@/lib/analytics";
 import { calculate, toUsdResult } from "@/lib/calc";
 import { findCountry } from "@/lib/countries";
-import { ATTRACT_IDLE_MS, DEFAULT_COUNTRY, MIN_CHART_YEARS } from "@/lib/defaults";
+import { ATTRACT_IDLE_MS, COMPANY, DEFAULT_COUNTRY, MIN_CHART_YEARS } from "@/lib/defaults";
 import { isLang, setLang, strings, useStoredLang, type Lang } from "@/lib/i18n";
 import { fromSearchParams, initialInputs, marketDefaults, parseDecimal, toSearchParams, validateInputs, type SalesInputs } from "@/lib/inputs";
 import { useSettings } from "@/lib/settings";
@@ -16,7 +16,6 @@ import { ComparisonTable } from "./ComparisonTable";
 import { ConsumptionPeriods, ConsumptionPrintPage } from "./ConsumptionPeriods";
 import { EnergySaved } from "./EnergySaved";
 import { Header } from "./Header";
-import { Headline } from "./Headline";
 import { I18nProvider } from "./I18nProvider";
 import { InputsPanel } from "./InputsPanel";
 import { NextStep } from "./NextStep";
@@ -128,11 +127,12 @@ export function Calculator() {
   return (
     <I18nProvider lang={lang}>
       <div className="flex min-h-screen flex-col print:hidden">
-        <Header onReset={reset} onPrint={() => window.print()} onShare={() => setShareOpen(true)} onLang={setLang} />
+        <Header onPrint={() => window.print()} onShare={() => setShareOpen(true)} onLang={setLang} />
 
         <main className="mx-auto w-full max-w-7xl flex-1 px-5 pb-20 sm:px-8">
-          <Headline comparison={comparison} country={country} currency={displayCurrency} rooms={numeric.rooms} season={numeric.operatingDays} />
-
+          <h1 className="sr-only">
+            {COMPANY} {strings(lang).savingsCalculator}
+          </h1>
           <div className="mt-10 grid items-start gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
             <aside className="xl:sticky xl:top-28">
               <InputsPanel inputs={inputs} country={country} errors={errors} onChange={update} onSelectCountry={selectCountry} />

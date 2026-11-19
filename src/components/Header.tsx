@@ -8,13 +8,12 @@ import { useI18n } from "./I18nProvider";
 import { Button, Segmented } from "./ui";
 
 interface Props {
-  onReset: () => void;
   onPrint: () => void;
   onShare: () => void;
   onLang: (lang: Lang) => void;
 }
 
-export function Header({ onReset, onPrint, onShare, onLang }: Props) {
+export function Header({ onPrint, onShare, onLang }: Props) {
   const { s, lang } = useI18n();
   return (
     <header className="sticky top-0 z-20 border-b border-line/80 bg-white/85 backdrop-blur-md">
@@ -60,16 +59,6 @@ export function Header({ onReset, onPrint, onShare, onLang }: Props) {
               {s.printSummary}
             </Button>
           </div>
-          <Button
-            variant="primary"
-            onClick={() => {
-              track("reset");
-              onReset();
-            }}
-          >
-            <span className="sm:hidden">{s.reset}</span>
-            <span className="hidden sm:inline">{s.resetForNext}</span>
-          </Button>
         </div>
       </div>
     </header>
